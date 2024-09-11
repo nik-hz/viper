@@ -1,0 +1,1 @@
+{"rule":"HAVE_PART_AGREEMENT","sentence":"^\\QWe aim to have achieve for python what Typescript does for Javascript\nMotivation\\E$"}
