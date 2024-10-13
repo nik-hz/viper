@@ -6,8 +6,9 @@ class Scanner:
         Initializes the scanner with the input code. No args, the scanner should be called on an input string.
         """
         # I/O
-        self.code
-        self.tokens
+        self.code # original string of code
+        self.chars # list of chars from self.code
+        self.tokens # list of final tokens
 
         # pointers
         self.lexemeBegin
@@ -20,7 +21,8 @@ class Scanner:
 
     def read_code(self) -> None:
         """
-        Reads the input code and prepares it for scanning.
+        Reads the input code and prepares it for scanning as self.code
+        and split self.code char by char as self.chars.
 
         Returns:
             None
@@ -41,13 +43,13 @@ class Scanner:
         Retrieves the next char from the code.
 
         Returns:
-            str: The next char as a string.
+            str: The next char as a string of length 1.
         """
         pass
 
-    def has_more_chars(self) -> bool:
+    def end_of_file(self) -> bool:
         """
-        Checks if there are more chars to parse.
+        Checks if the current token is the end of file.
 
         Returns:
             bool: True if the current token is the end of file, False otherwise.
