@@ -5,8 +5,18 @@ class Scanner:
         """
         Initializes the scanner with the input code. No args, the scanner should be called on an input string.
         """
+        # I/O
         self.code
         self.tokens
+
+        # pointers
+        self.lexemeBegin
+        self.forward
+        self.sentinel
+
+        # states
+        self.states = None  # TODO
+        self.accept_states = None  # TODO
 
     def read_code(self) -> None:
         """
@@ -19,25 +29,25 @@ class Scanner:
 
     def parse_code(self) -> list:
         """
-        Parses the code and returns a list of tokens.
+        Parses the code and returns a list of chars.
 
         Returns:
-            list: A list of tokens parsed from the code.
+            list: A list of chars parsed from the code.
         """
         pass
 
-    def next_token(self) -> str:
+    def next_char(self) -> str:
         """
-        Retrieves the next token from the code.
+        Retrieves the next char from the code.
 
         Returns:
-            str: The next token as a string.
+            str: The next char as a string.
         """
         pass
 
-    def has_more_tokens(self) -> bool:
+    def has_more_chars(self) -> bool:
         """
-        Checks if there are more tokens to parse.
+        Checks if there are more chars to parse.
 
         Returns:
             bool: True if there are more tokens, False otherwise.
