@@ -31,16 +31,16 @@ class Scanner:
         Retrieves the next token from the code.
 
         Returns:
-            str: The next token as a string.
+            str: The next token as a string of length 1.
         """
         pass
 
-    def has_more_tokens(self) -> bool:
+    def end_of_file(self) -> bool:
         """
-        Checks if there are more tokens to parse.
+        Checks if the current token is the end of file.
 
         Returns:
-            bool: True if there are more tokens, False otherwise.
+            bool: True if the current token is the end of file, False otherwise.
         """
         pass
 
