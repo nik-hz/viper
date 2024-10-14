@@ -12,7 +12,7 @@ We define six new token classes that the viper tokenizer recognizes.
 1) ```<TYPE_DEC>```: type declaration token → ``"::"``
    1) The ```::``` token will be used to declare the type of a variable or return value. It serves as the separator between variable names and their type annotations.
    2) Example: ```int :: x = 1;```
-2) ```<TYPE>```: Type tokens → ```“any”, “bool”, “callable”, “complex”, “dict”, “float”, “frozenset”, “int”, “list”, “optional”, “range”, “set”, “str”, “tuple”, “union”, “NoneType”```
+2) ```<TYPE>```: Type tokens → ```“Any”, “bool”, “Callable”, “complex”, “dict”, “float”, “frozenset”, “int”, “list”, “Optional”, “range”, “set”, “str”, “tuple”, “Union”, “NoneType”```
    1) Tokens representing data types such as ```str, float, list, tuple``` are recognized and reserved. 
    2) Example ```list :: y = [];```
 3) `<SEMICOLON>`: Semicolon → `";"`
