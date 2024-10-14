@@ -2,6 +2,9 @@
 Angel Cui: lc3542\
 Nikolaus Holzer: nh2677
 
+# Set up environment
+To run/develop viper, run ```source setup.sh```. This will activate a virtual environment called viper and set you up with required dependencies.
+
 # Tokenizing
 
 ## Lexical grammar
