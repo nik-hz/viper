@@ -1,4 +1,4 @@
-from .dfa import DFA
+from dfa import DFA
 
 
 class Scanner:
@@ -105,6 +105,10 @@ class Scanner:
             self.tokens.append(("LBRACE", "{"))
         elif char == "}":
             self.tokens.append(("RBRACE", "}"))
+        elif char == "(":
+            self.tokens.append(("LPAREN", "("))
+        elif char == ")":
+            self.tokens.append(("RPAREN", ")"))
 
     def handle_type_declaration(self) -> None:
         """
@@ -156,7 +160,7 @@ class Scanner:
                 continue
 
             if self.state == "START":
-                if char in [";", "{", "}"]:
+                if char in [";", "{", "}", "(", ")"]:
                     self.handle_single_char(char)
                 elif char == ":":
                     self.handle_type_declaration()
@@ -165,7 +169,7 @@ class Scanner:
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
-                        if next_char in ["{", "}", ";"]:  # TODO: Should we add ::?
+                        if next_char in ["{", "}", ";", "(", ")"]:  # TODO: Should we add ::?
                             self.forward -= 1  # Unread the non-alphanumeric, non-space character
                             break
                         elif (
