@@ -1,3 +1,6 @@
+from .dfa import DFA
+
+
 class Scanner:
     """Finite automata for scanning Viper code"""
 
@@ -21,8 +24,22 @@ class Scanner:
 
         # Updated list of reserved type tokens
         self.type_tokens = [
-            "Any", "bool", "Callable", "complex", "dict", "float", "frozenset", 
-            "int", "list", "Optional", "range", "set", "str", "tuple", "Union", "NoneType"
+            "Any",
+            "bool",
+            "Callable",
+            "complex",
+            "dict",
+            "float",
+            "frozenset",
+            "int",
+            "list",
+            "Optional",
+            "range",
+            "set",
+            "str",
+            "tuple",
+            "Union",
+            "NoneType",
         ]
 
     def read_code(self, input_code: str) -> None:
@@ -148,10 +165,12 @@ class Scanner:
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
-                        if next_char in ['{', '}', ';']:  # TODO: Should we add ::?
+                        if next_char in ["{", "}", ";"]:  # TODO: Should we add ::?
                             self.forward -= 1  # Unread the non-alphanumeric, non-space character
                             break
-                        elif next_char.isspace():  # Handle space as separator for maximal munch, stop collecting lexeme
+                        elif (
+                            next_char.isspace()
+                        ):  # Handle space as separator for maximal munch, stop collecting lexeme
                             break
                         else:
                             lexeme += next_char
@@ -186,12 +205,12 @@ class Scanner:
 if __name__ == "__main__":
     # Angel testing below
     scanner = Scanner()
-    #code = "int :: x_a; list :: y; print(x) { z=42 }"
-    #[('TYPE', 'int'), ('TYPE_DEC', '::'), ('VAR', 'x_a'), ('SEMICOLON', ';'), ('TYPE', 'list'), ('TYPE_DEC', '::'), ('VAR', 'y'), ('SEMICOLON', ';'), ('PYTHON_CODE', 'print(x)'), ('LBRACE', '{'), ('PYTHON_CODE', 'z=42'), ('RBRACE', '}')]
-    #code = "int :: x_a; list_a :: y;"
-    #[('TYPE', 'int'), ('TYPE_DEC', '::'), ('VAR', 'x_a'), ('SEMICOLON', ';'), ('PYTHON_CODE', 'list_a'), ('TYPE_DEC', '::'), ('VAR', 'y'), ('SEMICOLON', ';')]
+    # code = "int :: x_a; list :: y; print(x) { z=42 }"
+    # [('TYPE', 'int'), ('TYPE_DEC', '::'), ('VAR', 'x_a'), ('SEMICOLON', ';'), ('TYPE', 'list'), ('TYPE_DEC', '::'), ('VAR', 'y'), ('SEMICOLON', ';'), ('PYTHON_CODE', 'print(x)'), ('LBRACE', '{'), ('PYTHON_CODE', 'z=42'), ('RBRACE', '}')]
+    # code = "int :: x_a; list_a :: y;"
+    # [('TYPE', 'int'), ('TYPE_DEC', '::'), ('VAR', 'x_a'), ('SEMICOLON', ';'), ('PYTHON_CODE', 'list_a'), ('TYPE_DEC', '::'), ('VAR', 'y'), ('SEMICOLON', ';')]
     code = "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}"
-    #The above test case needs to be worked on
+    # The above test case needs to be worked on
     scanner.read_code(code)
     tokens = scanner.scan_token()
     print(tokens)
