@@ -1,6 +1,3 @@
-from dfa import DFA
-
-
 class Scanner:
     """Finite automata for scanning Viper code"""
 
@@ -50,8 +47,7 @@ class Scanner:
             "str",
             "tuple",
             "Union",
-            "NoneType",
-            "def",
+            "NoneType"
         ]
 
         # keep track of vars that have been defined already
@@ -147,9 +143,7 @@ class Scanner:
         Args:
             lexeme (str): The current lexeme being scanned.
         """
-        if lexeme == "def":
-            self.tokens.append(("DEF", lexeme))
-        elif lexeme in self.type_tokens:
+        if lexeme in self.type_tokens:
             self.tokens.append(("TYPE", lexeme))
 
     def handle_variable(self, lexeme: str) -> None:
@@ -215,12 +209,16 @@ class Scanner:
                     if expect_var:
                         if lexeme in self.type_tokens:  # If it's a type token, handle it as a type
                             self.handle_type_token(lexeme)
+                        elif lexeme == "def":
+                            self.tokens.append(("DEF", lexeme)) # If it's "def", handle it as DEF
                         else:
                             self.handle_variable(lexeme)  # Otherwise, it's a variable
                         expect_var = False  # Reset the flag after processing
                     else:
                         if lexeme in self.type_tokens:
                             self.handle_type_token(lexeme)
+                        elif lexeme == "def":
+                            self.tokens.append(("DEF", lexeme))
                         else:
                             self.handle_python_code(lexeme)  # Treat it as general Python code
                     # if previous token was def then expect func
