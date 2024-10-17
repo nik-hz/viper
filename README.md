@@ -41,10 +41,16 @@ We define six new token classes that the viper tokenizer recognizes.
 12) `<PYTHON_CODE>`: All regular python tokens → special token for unchecked token, viper relies on python interpreter for correctness.
 
 ## Error handling
-Our lexical parser only handles errors directly related to malformed type declarations and missing semicolons. The default error handling mode is to pass the wrong code through to python code and have the python interpreter catch the error when executing. 
+Our lexical parser only handles errors directly related to malformed type declarations. 
+
+We implement panic mode for handling malformed lexemes of the types that we are defining in our lexical grammar. The default error handling of our lexer is to pass lexemes through to the python code class, errors will then appear when attempting to run the python program.
 
 ## Tokenizing Examples
 
+```Code:
+ str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}
+[<TYPE, str>, <TYPE_DEC, ::>, <DEF, def>, <FUNC, say_hello_world>, <LPAREN, (>, <RPAREN, )>, <LBRACE, {>, <PYTHON_CODE, string>, <TYPE_DEC, ::>, <VAR, text>, <ASSIGN, =>, <PYTHON_CODE, 'hello>, <PYTHON_CODE, world'>, <SEMICOLON, ;>, <PYTHON_CODE, print>, <LPAREN, (>, <VAR, text>, <RPAREN, )>, <SEMICOLON, ;>, <RBRACE, }>]
+```
 # Development
 For developpers, make sure you are in the viper directory. and run ```source ./setup.sh```. 
 This should activate a virtual environment called viper and set you up with required dependencies.

@@ -22,13 +22,23 @@ if __name__ == "__main__":
         "int :: x_a; list_a :: y;",
         "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}",
         "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
-        # Add more test cases as needed
-        "str:: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
-        "int :: 123x_a; list :: y; print(x) { z=42 }",
+    ]
+    error_cases = [
+        "str:: t = 'hello world!';",
+        "int :: 123x_a;",
+        "int :: a = @;",
     ]
 
     # Loop through each test case and run the scanner
     for idx, code in enumerate(test_cases):
+        print(f"\nRunning test case {idx + 1}:")
+        print(f"Code:\n {code}")
+        run_scanner(code)
+        print("-" * 40)  # Separator between test cases
+
+    print("\n", "#" * 10, " Running error cases ", "#" * 10)
+
+    for idx, code in enumerate(error_cases):
         print(f"\nRunning test case {idx + 1}:")
         print(f"Code:\n {code}")
         run_scanner(code)
