@@ -28,7 +28,7 @@ class Scanner:
             "TYPE",
             "DEF",
             "VAR",
-            "PYTHON_CODE"
+            "PYTHON_CODE",
         }
 
         # Updated list of reserved type tokens
@@ -48,7 +48,7 @@ class Scanner:
             "str",
             "tuple",
             "Union",
-            "NoneType"
+            "NoneType",
         ]
 
         # Updated list of reserved single-character tokens
@@ -60,7 +60,18 @@ class Scanner:
         self.defined_funcs = []
 
         self.expect_var = False  # This flag will be set to True after encountering TYPE_DEC
-        self.expect_func = False # This flag will be set to True after encountering DEF
+        self.expect_func = False  # This flag will be set to True after encountering DEF
+
+    def remove_comments_and_newline(self, input_code):
+        cleaned_code = []
+        for line in input_code.splitlines():
+            if not line.strip().startswith("#"):
+                line = line.split("#", 1)[0].rstrip()
+            # Add the cleaned line if it's not empty
+            if line:
+                cleaned_code.append(line)
+
+        return " ".join(cleaned_code)
 
     def read_code(self, input_code: str) -> None:
         """
@@ -72,7 +83,7 @@ class Scanner:
         Returns:
             None
         """
-        self.code = input_code
+        self.code = self.remove_comments_and_newline(input_code)
         self.chars = list(self.code)
         self.sentinel = len(self.chars)
         # Reset the scanner after each scan
@@ -142,7 +153,7 @@ class Scanner:
         elif char == ",":
             self.tokens.append(("PYTHON_CODE", ","))
 
-    def handle_type_declaration(self) -> None:
+    def handle_colon(self) -> None:
         """
         Handle type declaration for "::".
         """
@@ -150,6 +161,9 @@ class Scanner:
         if next_char == ":":
             self.tokens.append(("TYPE_DEC", "::"))
             self.expect_var = True
+        elif next_char == ("{" or " "):
+            self.tokens.append(("PYTHON_CODE", ":"))
+            self.expect_var = False
         else:
             # TODO: Add error handling for unexpected characters
             raise ValueError(f"Unexpected character '{next_char}' after ':'")
@@ -212,26 +226,35 @@ class Scanner:
                 if char in self.single_char_tokens:
                     self.handle_single_char(char)
                 elif char == ":":
-                    self.handle_type_declaration()
+                    self.handle_colon()
                 elif char.isalnum() or char == "_":  # Collect alphanumeric variables/types
+                    expect_number = char.isnumeric()  # true if we are at a number
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
-                        if next_char in self.single_char_tokens:  # TODO: Should we add ::?
+                        if expect_number and (next_char.isalpha() or next_char == "_"):
+                            # panic mode, start deleting chars until we reach a space or a number
+                            continue
+                        if next_char in self.single_char_tokens:
                             self.forward -= 1  # Unread the non-alphanumeric, non-space character
                             break
-                        elif (
-                            next_char.isspace()
-                        ):  # Handle space as separator for maximal munch, stop collecting lexeme
+                        elif next_char == ":" and lexeme in self.type_tokens:
+                            # Case where type:: is misspelt
+                            self.forward -= 1
+                            break
+                        elif next_char.isspace():
+                            # Handle space as separator for maximal munch, stop collecting lexeme
                             break
                         else:
                             lexeme += next_char
-                    if lexeme in self.type_tokens: # If it's a type token, handle it as a type
+                    if lexeme in self.type_tokens:  # If it's a type token, handle it as a type
                         self.handle_type_token(lexeme)
-                    elif lexeme == "def": # If it's "def", handle it as DEF
+                    elif lexeme == "def":  # If it's "def", handle it as DEF
                         self.tokens.append(("DEF", lexeme))
                         self.expect_func = True
-                    elif self.expect_func: # if previous token was def then expect func, FUNC takes precedence than VAR
+                    elif (
+                        self.expect_func
+                    ):  # if previous token was def then expect func, FUNC takes precedence than VAR
                         self.handle_func_token(lexeme)
                     elif self.expect_var:  # If previous token was :: then expect var
                         self.handle_variable(lexeme)
