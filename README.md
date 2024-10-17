@@ -37,7 +37,11 @@ We define six new token classes that the viper tokenizer recognizes.
    1) Any function name that come after `<DEF>`.
 10) `<DEF>`: Function definition → `"def"`
    1) Function definition
-11) `<PYTHON_CODE>`: All regular python tokens → special token for unchecked token, viper relies on python interpreter for correctness.
+11) `<ASSIGN>`: Defines the `=` operator which assigns values to variables.
+12) `<PYTHON_CODE>`: All regular python tokens → special token for unchecked token, viper relies on python interpreter for correctness.
+
+## Error handling
+Our lexical parser only handles errors directly related to malformed type declarations and missing semicolons. The default error handling mode is to pass the wrong code through to python code and have the python interpreter catch the error when executing. 
 
 ## Tokenizing Examples
 

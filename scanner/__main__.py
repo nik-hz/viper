@@ -1,4 +1,4 @@
-from .scanner import Scanner
+from scanner import Scanner
 
 def print_tokens(tokens):
     # Format output with angle brackets <> instead of parentheses
@@ -14,12 +14,13 @@ def run_scanner(code):
 if __name__ == "__main__":
     # List of test cases to run the scanner on
     test_cases = [
-        "int :: x_a; list :: y; print(x) { z=42 }",
-        "int :: z; int :: x_a; list :: y; print(x) { z=42 }",
-        "int :: x_a; list_a :: y;",
-        "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}",
-        "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
+        # "int :: x_a; list :: y; print(x) { z=42 }",
+        # "int :: z; int :: x_a; list :: y; print(x) { z=42 }",
+        # "int :: x_a; list_a :: y;",
+        # "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}",
+        # "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
         # Add more test cases as needed
+        "str:: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
     ]
 
     # Loop through each test case and run the scanner

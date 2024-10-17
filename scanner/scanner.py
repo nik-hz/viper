@@ -28,7 +28,7 @@ class Scanner:
             "TYPE",
             "DEF",
             "VAR",
-            "PYTHON_CODE"
+            "PYTHON_CODE",
         }
 
         # Updated list of reserved type tokens
@@ -48,7 +48,7 @@ class Scanner:
             "str",
             "tuple",
             "Union",
-            "NoneType"
+            "NoneType",
         ]
 
         # Updated list of reserved single-character tokens
@@ -60,7 +60,7 @@ class Scanner:
         self.defined_funcs = []
 
         self.expect_var = False  # This flag will be set to True after encountering TYPE_DEC
-        self.expect_func = False # This flag will be set to True after encountering DEF
+        self.expect_func = False  # This flag will be set to True after encountering DEF
 
     def read_code(self, input_code: str) -> None:
         """
@@ -220,18 +220,24 @@ class Scanner:
                         if next_char in self.single_char_tokens:  # TODO: Should we add ::?
                             self.forward -= 1  # Unread the non-alphanumeric, non-space character
                             break
-                        elif (
-                            next_char.isspace()
-                        ):  # Handle space as separator for maximal munch, stop collecting lexeme
+                        elif next_char == ":" and lexeme in self.type_tokens:
+                            # Case where type:: is misspelt
+                            self.forward -= 1
+                            break
+
+                        elif next_char.isspace():
+                            # Handle space as separator for maximal munch, stop collecting lexeme
                             break
                         else:
                             lexeme += next_char
-                    if lexeme in self.type_tokens: # If it's a type token, handle it as a type
+                    if lexeme in self.type_tokens:  # If it's a type token, handle it as a type
                         self.handle_type_token(lexeme)
-                    elif lexeme == "def": # If it's "def", handle it as DEF
+                    elif lexeme == "def":  # If it's "def", handle it as DEF
                         self.tokens.append(("DEF", lexeme))
                         self.expect_func = True
-                    elif self.expect_func: # if previous token was def then expect func, FUNC takes precedence than VAR
+                    elif (
+                        self.expect_func
+                    ):  # if previous token was def then expect func, FUNC takes precedence than VAR
                         self.handle_func_token(lexeme)
                     elif self.expect_var:  # If previous token was :: then expect var
                         self.handle_variable(lexeme)
