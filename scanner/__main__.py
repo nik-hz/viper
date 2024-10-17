@@ -1,6 +1,13 @@
 from scanner import Scanner
 
 
+def build_tok_list(tokens):
+    t = []
+    for token in tokens:
+        t.append(f"<{token[0]}, {token[1]}>")
+    print(t)
+
+
 def print_tokens(tokens):
     # Format output with angle brackets <> instead of parentheses
     for token in tokens:
@@ -23,9 +30,11 @@ if __name__ == "__main__":
         "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}",
         "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
     ]
+
     error_cases = [
         "str:: t = 'hello world!';",
         "int :: 123x_a;",
+        "int :: a = 123abc456;",
         "int :: a = @;",
     ]
 

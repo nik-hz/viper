@@ -47,10 +47,58 @@ We implement panic mode for handling malformed lexemes of the types that we are 
 
 ## Tokenizing Examples
 
+We show examples that illustrate how tokenized viper code looks like. 
 ```Code:
+Code:
+ int :: x_a; list :: y; print(x) { z=42 }
+['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, x_a>', '<SEMICOLON, ;>', '<TYPE, list>', '<TYPE_DEC, ::>', '<VAR, y>', '<SEMICOLON, ;>', '<PYTHON_CODE, print>', '<LPAREN, (>', '<PYTHON_CODE, x>', '<RPAREN, )>', '<LBRACE, {>', '<PYTHON_CODE, z>', '<ASSIGN, =>', '<PYTHON_CODE, 42>', '<RBRACE, }>']
+----------------------------------------
+
+Running test case 2:
+Code:
+ int :: z; int :: x_a; list :: y; print(x) { z=42 }
+['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, z>', '<SEMICOLON, ;>', '<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, x_a>', '<SEMICOLON, ;>', '<TYPE, list>', '<TYPE_DEC, ::>', '<VAR, y>', '<SEMICOLON, ;>', '<PYTHON_CODE, print>', '<LPAREN, (>', '<PYTHON_CODE, x>', '<RPAREN, )>', '<LBRACE, {>', '<VAR, z>', '<ASSIGN, =>', '<PYTHON_CODE, 42>', '<RBRACE, }>']
+----------------------------------------
+
+Running test case 3:
+Code:
+ int :: x_a; list_a :: y;
+['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, x_a>', '<SEMICOLON, ;>', '<PYTHON_CODE, list_a>', '<TYPE_DEC, ::>', '<VAR, y>', '<SEMICOLON, ;>']
+----------------------------------------
+
+Running test case 4:
+Code:
+ int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}
+['<TYPE, int>', '<TYPE_DEC, ::>', '<DEF, def>', '<FUNC, func>', '<LPAREN, (>', '<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, a>', '<PYTHON_CODE, ,>', '<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, b>', '<RPAREN, )>', '<LBRACE, {>', '<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, c>', '<ASSIGN, =>', '<VAR, a>', '<PYTHON_CODE, +>', '<VAR, b>', '<SEMICOLON, ;>', '<PYTHON_CODE, return>', '<VAR, c>', '<SEMICOLON, ;>', '<RBRACE, }>']
+----------------------------------------
+
+Running test case 5:
+Code:
  str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}
-[<TYPE, str>, <TYPE_DEC, ::>, <DEF, def>, <FUNC, say_hello_world>, <LPAREN, (>, <RPAREN, )>, <LBRACE, {>, <PYTHON_CODE, string>, <TYPE_DEC, ::>, <VAR, text>, <ASSIGN, =>, <PYTHON_CODE, 'hello>, <PYTHON_CODE, world'>, <SEMICOLON, ;>, <PYTHON_CODE, print>, <LPAREN, (>, <VAR, text>, <RPAREN, )>, <SEMICOLON, ;>, <RBRACE, }>]
+['<TYPE, str>', '<TYPE_DEC, ::>', '<DEF, def>', '<FUNC, say_hello_world>', '<LPAREN, (>', '<RPAREN, )>', '<LBRACE, {>', '<PYTHON_CODE, string>', '<TYPE_DEC, ::>', '<VAR, text>', '<ASSIGN, =>', "<PYTHON_CODE, 'hello>", "<PYTHON_CODE, world'>", '<SEMICOLON, ;>', '<PYTHON_CODE, print>', '<LPAREN, (>', '<VAR, text>', '<RPAREN, )>', '<SEMICOLON, ;>', '<RBRACE, }>']
+----------------------------------------
 ```
+
+Additionally, here are examples of how our program handles errors. Our scanner has two recovery strategy for different errors. 
+
+
+**Incorrect type assignment error:** We consider the easy mistake of programmers not inserting the correct space between a type and the declarative `::`. Here, if the scanner has consumed a valid type string, and the next token is a `:` and not a space, then it inserts the whitespace and tokenizes correctly. 
+```
+Code:
+ str:: t = 'hello world!';
+['<TYPE, str>', '<TYPE_DEC, ::>', '<VAR, t>', '<ASSIGN, =>', "<PYTHON_CODE, 'hello>", "<PYTHON_CODE, world!'>", '<SEMICOLON, ;>']
+```
+
+**Mixing ints and strs:** We consider the case where a variable name starts with numbers, or conversely an integer includes digits. Our compiler results to panic mode deleting str characters and `_` until it reaches a valid token which may be more ints or a whitespace.
+
+```
+Code:
+ int :: 123x_a;
+['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, 123>', '<SEMICOLON, ;>']
+```
+
+**Invalid characters:** Our default error handling strategy for characters that are not valid in python is to pass them through as python code. Since they are not recognized by Viper, the scanner assumes that they are valid python code and tokenizes them. In this case the Python interpreter will notify the programmer of the invalid input. 
+
 # Development
 For developpers, make sure you are in the viper directory. and run ```source ./setup.sh```. 
 This should activate a virtual environment called viper and set you up with required dependencies.
