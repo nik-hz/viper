@@ -5,7 +5,9 @@ def print_list(tokens):
     t = []
     for token in tokens:
         t.append(f"<{token[0]}, {token[1]}>")
-    print(t)
+        if len(t) == 3:
+            print(t)
+            t = []
 
 
 def print_tokens(tokens):
@@ -18,7 +20,7 @@ def run_scanner(code):
     scanner = Scanner()
     scanner.read_code(code)
     tokens = scanner.scan_token()  # Retrieve tokens
-    print_list(tokens)  # This prints the tokens in the format asked <Token Type, Token Value>
+    print_tokens(tokens)  # This prints the tokens in the format asked <Token Type, Token Value>
 
 
 if __name__ == "__main__":

@@ -8,6 +8,7 @@ Nikolaus Holzer: nh2677
 3) Run ```source ./scanner.sh```. This will activate a virtual environment called viper and set you up with required dependencies, and run the five code examples and return the outputs.
 
 # Tokenizing
+For grading please run `python scanner` which will execute the `__main__.py` file in the scanner dir. This will run the examples shown below and parse them. Note: we print out two token tuples at a time for conciness in the readme, but the code output will have one token per line. 
 
 ## Lexical grammar
 We define six new token classes that the viper tokenizer recognizes.
