@@ -99,6 +99,11 @@ Code:
 
 **Invalid characters:** Our default error handling strategy for characters that are not valid in python is to pass them through as python code. Since they are not recognized by Viper, the scanner assumes that they are valid python code and tokenizes them. In this case the Python interpreter will notify the programmer of the invalid input. 
 
+```Code:
+ int :: a = @;
+['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, a>', '<ASSIGN, =>', '<PYTHON_CODE, @>', '<SEMICOLON, ;>']
+```
+
 # Development
 For developpers, make sure you are in the viper directory. and run ```source ./setup.sh```. 
 This should activate a virtual environment called viper and set you up with required dependencies.

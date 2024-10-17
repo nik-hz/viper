@@ -1,7 +1,7 @@
 from scanner import Scanner
 
 
-def build_tok_list(tokens):
+def print_list(tokens):
     t = []
     for token in tokens:
         t.append(f"<{token[0]}, {token[1]}>")
@@ -18,17 +18,43 @@ def run_scanner(code):
     scanner = Scanner()
     scanner.read_code(code)
     tokens = scanner.scan_token()  # Retrieve tokens
-    print_tokens(tokens)  # This prints the tokens in the format asked <Token Type, Token Value>
+    print_list(tokens)  # This prints the tokens in the format asked <Token Type, Token Value>
 
 
 if __name__ == "__main__":
     # List of test cases to run the scanner on
     test_cases = [
-        "int :: x_a; list :: y; print(x) { z=42 }",
-        "int :: z; int :: x_a; list :: y; print(x) { z=42 }",
-        "int :: x_a; list_a :: y;",
-        "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}",
+        "int :: x_a = 10; list :: y = range(0,x_a); for i in y: { print(i); }",
         "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
+        "int :: def func(int :: a, int :: b):{ int :: c = a + b; return c;}",
+        """
+        from math import sqrt;
+        
+        NoneType :: def nthFib(int :: n):{
+            int :: res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
+            print(res,'is',str(n)+'th fibonacci number');
+        }
+        nthFib(12);
+        """,
+        """
+        # Function for nth Fibonacci number
+        int :: def Fibonacci(int :: n):{
+            if n<= 0:
+                print("Incorrect input")
+            # First Fibonacci number is 0
+            elif n == 1:
+                return 0
+            # Second Fibonacci number is 1
+            elif n == 2:{
+                return 1;
+            }
+            else:{
+                return Fibonacci(n-1)+Fibonacci(n-2);
+            }
+        }
+
+        print(Fibonacci(10)) # our code even handles inline comments!
+        """,
     ]
 
     error_cases = [
@@ -37,6 +63,30 @@ if __name__ == "__main__":
         "int :: a = 123abc456;",
         "int :: a = @;",
     ]
+
+    test = """
+        # Function for nth Fibonacci number
+        int :: def Fibonacci(int :: n):{
+            if n<= 0:{
+                print("Incorrect input");
+            }
+            # First Fibonacci number is 0
+            elif n == 1:{
+                return 0;
+            }
+            # Second Fibonacci number is 1
+            elif n == 2:{
+                return 1;
+            }
+            else:{
+                return Fibonacci(n-1)+Fibonacci(n-2);
+            }
+        }
+
+        print(Fibonacci(10));
+        """
+
+    # run_scanner(test)
 
     # Loop through each test case and run the scanner
     for idx, code in enumerate(test_cases):

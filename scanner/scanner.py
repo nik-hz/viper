@@ -62,6 +62,17 @@ class Scanner:
         self.expect_var = False  # This flag will be set to True after encountering TYPE_DEC
         self.expect_func = False  # This flag will be set to True after encountering DEF
 
+    def remove_comments_and_newline(self, input_code):
+        cleaned_code = []
+        for line in input_code.splitlines():
+            if not line.strip().startswith("#"):
+                line = line.split("#", 1)[0].rstrip()
+            # Add the cleaned line if it's not empty
+            if line:
+                cleaned_code.append(line)
+
+        return " ".join(cleaned_code)
+
     def read_code(self, input_code: str) -> None:
         """
         Reads the input code and prepares it for scanning as self.code
@@ -72,7 +83,7 @@ class Scanner:
         Returns:
             None
         """
-        self.code = input_code
+        self.code = self.remove_comments_and_newline(input_code)
         self.chars = list(self.code)
         self.sentinel = len(self.chars)
         # Reset the scanner after each scan
@@ -142,7 +153,7 @@ class Scanner:
         elif char == ",":
             self.tokens.append(("PYTHON_CODE", ","))
 
-    def handle_type_declaration(self) -> None:
+    def handle_colon(self) -> None:
         """
         Handle type declaration for "::".
         """
@@ -150,6 +161,9 @@ class Scanner:
         if next_char == ":":
             self.tokens.append(("TYPE_DEC", "::"))
             self.expect_var = True
+        elif next_char == ("{" or " "):
+            self.tokens.append(("PYTHON_CODE", ":"))
+            self.expect_var = False
         else:
             # TODO: Add error handling for unexpected characters
             raise ValueError(f"Unexpected character '{next_char}' after ':'")
@@ -212,7 +226,7 @@ class Scanner:
                 if char in self.single_char_tokens:
                     self.handle_single_char(char)
                 elif char == ":":
-                    self.handle_type_declaration()
+                    self.handle_colon()
                 elif char.isalnum() or char == "_":  # Collect alphanumeric variables/types
                     expect_number = char.isnumeric()  # true if we are at a number
                     lexeme += char
