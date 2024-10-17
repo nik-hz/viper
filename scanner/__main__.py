@@ -1,26 +1,30 @@
 from scanner import Scanner
 
+
 def print_tokens(tokens):
     # Format output with angle brackets <> instead of parentheses
     for token in tokens:
         print(f"<{token[0]}, {token[1]}>")
 
+
 def run_scanner(code):
     scanner = Scanner()
     scanner.read_code(code)
-    tokens = scanner.scan_token() # Retrieve tokens
-    print_tokens(tokens) # This prints the tokens in the format asked <Token Type, Token Value>
+    tokens = scanner.scan_token()  # Retrieve tokens
+    print_tokens(tokens)  # This prints the tokens in the format asked <Token Type, Token Value>
+
 
 if __name__ == "__main__":
     # List of test cases to run the scanner on
     test_cases = [
-        # "int :: x_a; list :: y; print(x) { z=42 }",
-        # "int :: z; int :: x_a; list :: y; print(x) { z=42 }",
-        # "int :: x_a; list_a :: y;",
-        # "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}",
-        # "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
+        "int :: x_a; list :: y; print(x) { z=42 }",
+        "int :: z; int :: x_a; list :: y; print(x) { z=42 }",
+        "int :: x_a; list_a :: y;",
+        "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}",
+        "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
         # Add more test cases as needed
         "str:: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
+        "int :: 123x_a; list :: y; print(x) { z=42 }",
     ]
 
     # Loop through each test case and run the scanner

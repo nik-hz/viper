@@ -214,17 +214,20 @@ class Scanner:
                 elif char == ":":
                     self.handle_type_declaration()
                 elif char.isalnum() or char == "_":  # Collect alphanumeric variables/types
+                    expect_number = char.isnumeric()  # true if we are at a number
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
-                        if next_char in self.single_char_tokens:  # TODO: Should we add ::?
+                        if expect_number and (next_char.isalpha() or next_char == "_"):
+                            # panic mode, start deleting chars until we reach a space or a number
+                            continue
+                        if next_char in self.single_char_tokens:
                             self.forward -= 1  # Unread the non-alphanumeric, non-space character
                             break
                         elif next_char == ":" and lexeme in self.type_tokens:
                             # Case where type:: is misspelt
                             self.forward -= 1
                             break
-
                         elif next_char.isspace():
                             # Handle space as separator for maximal munch, stop collecting lexeme
                             break
