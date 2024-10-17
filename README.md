@@ -18,15 +18,23 @@ We define six new token classes that the viper tokenizer recognizes.
 3) `<SEMICOLON>`: Semicolon → `";"`
    1) The semicolon terminates logical lines, offering an alternative to python's newline delinated logical lines.
    2) Example `print("Hello world!")`
-4) `<LBRACE>`: Curly brace left → `"{"`
+4) `<LPAREN>`: Paren left → `"("`
+   1) Left parenthesis
+5) `<RPAREN>`: Paren right → `")"`
+   1) Right parenthesis
+6) `<LCBRACE>`: Curly brace left → `"{"`
    1) Curly braces define blocks of code (such as function bodies or control flow syntax) and replaces pythons indentation based syntax.
    2) Example ```if a == True: {print("Hello world!");}```
-5) `<RBRACE>`: Curly brace right → `"}"`
+7) `<RCBRACE>`: Curly brace right → `"}"`
    1) Curly braces define blocks of code (such as function bodies or control flow syntax) and replaces pythons indentation based syntax.
    2) Example ```if a == True: {print("Hello world!");}```
-6) `<VAR>`: Variable name → `"a"`
+8) `<VAR>`: Variable name → `"a"`
    1) Any variable name that come after `<TYPE> <TYPE_DEC>`.
    2) Example ```int :: a;```
-7) `<PYTHON_CODE>`: All regular python tokens → special token for unchecked token, viper relies on python interpreter for correctness.
+9) `<FUNC>`: Function name → `"a"`
+   1) Any function name that come after `<DEF>`.
+10) `<DEF>`: Function definition → `"def"`
+   1) Function definition
+11) `<PYTHON_CODE>`: All regular python tokens → special token for unchecked token, viper relies on python interpreter for correctness.
 
 ## Tokenizing Examples
