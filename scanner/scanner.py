@@ -1,7 +1,7 @@
 class Scanner:
     """Finite automata for scanning Viper code"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes the scanner with the input code. No args, the scanner should be called on an input string.
         """
@@ -23,6 +23,7 @@ class Scanner:
             "RBRACE",
             "LPAREN",
             "RPAREN",
+            "ASSIGN",
             "TYPE_DEC",
             "TYPE",
             "DEF",
@@ -49,6 +50,9 @@ class Scanner:
             "Union",
             "NoneType"
         ]
+
+        # Updated list of reserved single-character tokens
+        self.single_char_tokens = [";", "{", "}", "(", ")", ",", "="]
 
         # keep track of vars that have been defined already
         # This should be fine even without scope I
@@ -133,6 +137,8 @@ class Scanner:
             self.tokens.append(("LPAREN", "("))
         elif char == ")":
             self.tokens.append(("RPAREN", ")"))
+        elif char == "=":
+            self.tokens.append(("ASSIGN", "="))
         elif char == ",":
             self.tokens.append(("PYTHON_CODE", ","))
 
@@ -179,7 +185,7 @@ class Scanner:
         else:
             self.tokens.append(("PYTHON_CODE", lexeme))
 
-    def handle_func_token(self, lexeme):
+    def handle_func_token(self, lexeme) -> None:
         self.defined_funcs.append(lexeme)
         self.tokens.append(("FUNC", lexeme))
         self.expect_func = False
@@ -188,10 +194,10 @@ class Scanner:
     def scan_token(self) -> list:
         """
         Scans the input code for specific tokens using finite automata transitions.
-        Handles tokens for `;`, `{`, `}`, `::`, type tokens, variable names, and Python code.
+        Handles tokens.
 
         Returns:
-            list: A list of tokens in the format <Token Type, Token Value>.
+            list: A list of tokens in the format (Token Type, Token Value).
         """
         lexeme = ""
 
@@ -203,7 +209,7 @@ class Scanner:
                 continue
 
             if self.state == "START":
-                if char in [";", "{", "}", "(", ")", ","]:
+                if char in self.single_char_tokens:
                     self.handle_single_char(char)
                 elif char == ":":
                     self.handle_type_declaration()
@@ -211,7 +217,7 @@ class Scanner:
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
-                        if next_char in [";", "{", "}", "(", ")", ","]:  # TODO: Should we add ::?
+                        if next_char in self.single_char_tokens:  # TODO: Should we add ::?
                             self.forward -= 1  # Unread the non-alphanumeric, non-space character
                             break
                         elif (
@@ -237,37 +243,11 @@ class Scanner:
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
-                        if next_char in [";", "{", "}", ":"] or next_char.isspace():
+                        if next_char in self.single_char_tokens or next_char.isspace():
                             self.forward -= 1  # Unread the token boundary
                             break
                         lexeme += next_char
                     self.handle_python_code(lexeme)
                     lexeme = ""
-                self.expect_func = self.tokens[-1][0] == "DEF"
 
         return self.tokens
-
-
-if __name__ == "__main__":
-    # Angel testing below
-    scanner = Scanner()
-    # code = "int :: x_a; list :: y; print(x) { z=42 }"
-    # [('TYPE', 'int'), ('TYPE_DEC', '::'), ('VAR', 'x_a'), ('SEMICOLON', ';'), ('TYPE', 'list'), ('TYPE_DEC', '::'), ('VAR', 'y'), ('SEMICOLON', ';'), ('PYTHON_CODE', 'print(x)'), ('LBRACE', '{'), ('PYTHON_CODE', 'z=42'), ('RBRACE', '}')]
-    # code = "int :: x_a; list_a :: y;"
-    # [('TYPE', 'int'), ('TYPE_DEC', '::'), ('VAR', 'x_a'), ('SEMICOLON', ';'), ('PYTHON_CODE', 'list_a'), ('TYPE_DEC', '::'), ('VAR', 'y'), ('SEMICOLON', ';')]
-    code = "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}"
-    code2 = "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}"
-    # The above test case needs to be worked on
-    scanner.read_code(code)
-    tokens = scanner.scan_token()
-    print(tokens)
-    
-    print("")
-    
-    scanner.read_code(code2)
-    tokens = scanner.scan_token()
-    print(tokens)
-
-    # Nikolaus testing below
-
-    pass
