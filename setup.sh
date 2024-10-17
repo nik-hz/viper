@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Current directory: $(pwd)"
+
 # 1. Check if mamba is installed; if not, install Miniforge and mamba
 if ! command -v mamba &> /dev/null
 then
@@ -9,7 +11,8 @@ then
     wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O Miniforge3.sh
     
     # Install Miniforge silently
-    bash Miniforge3.sh -b -p $HOME/miniforge3
+    chmod +x $(pwd)/config/Miniforge3.sh
+    bash $(pwd)/config/Miniforge3.sh -b -p $HOME/miniforge3
 
     # Add conda to PATH
     export PATH="$HOME/miniforge3/bin:$PATH"
@@ -40,6 +43,8 @@ pip install --upgrade pip
 
 # 5. Install core dependencies
 echo "Installing core dependencies..."
-pip install -r requirements.txt
+# Make sure the requirements.txt file is executable
+chmod +x $(pwd)/config/requirements.txt
+pip install -r $(pwd)/config/requirements.txt
 
 echo "Setup complete."

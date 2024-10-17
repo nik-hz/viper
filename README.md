@@ -2,8 +2,10 @@
 Angel Cui: lc3542\
 Nikolaus Holzer: nh2677
 
-# Set up environment
-To run/develop viper, run ```source setup.sh```. This will activate a virtual environment called viper and set you up with required dependencies.
+# For TAs: shell script to set up virtual environment and run 5 code examples for the scanner
+1) Make sure you are in the viper directory.
+2) Run ```chmod +x scanner.sh``` to ensure executable access to the shell script.
+3) Run ```source ./scanner.sh```. This will activate a virtual environment called viper and set you up with required dependencies, and run the five code examples and return the outputs.
 
 # Tokenizing
 
@@ -38,3 +40,7 @@ We define six new token classes that the viper tokenizer recognizes.
 11) `<PYTHON_CODE>`: All regular python tokens → special token for unchecked token, viper relies on python interpreter for correctness.
 
 ## Tokenizing Examples
+
+# Development
+For developpers, make sure you are in the viper directory. and run ```source ./setup.sh```. 
+This should activate a virtual environment called viper and set you up with required dependencies.
