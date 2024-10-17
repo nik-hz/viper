@@ -21,13 +21,13 @@ class Scanner:
             "SEMICOLON",
             "LBRACE",
             "RBRACE",
-            "TYPE_DEC",
-            "TYPE",
-            "VAR",
-            "PYTHON_CODE",
             "LPAREN",
             "RPAREN",
+            "TYPE_DEC",
+            "TYPE",
             "DEF",
+            "VAR",
+            "PYTHON_CODE"
         }
 
         # Updated list of reserved type tokens
@@ -55,6 +55,9 @@ class Scanner:
         self.defined_vars = []
         self.defined_funcs = []
 
+        self.expect_var = False  # This flag will be set to True after encountering TYPE_DEC
+        self.expect_func = False # This flag will be set to True after encountering DEF
+
     def read_code(self, input_code: str) -> None:
         """
         Reads the input code and prepares it for scanning as self.code
@@ -68,6 +71,8 @@ class Scanner:
         self.code = input_code
         self.chars = list(self.code)
         self.sentinel = len(self.chars)
+        # Reset the scanner after each scan
+        self.reset_scanner()
 
     def next_char(self) -> str:
         """
@@ -101,6 +106,12 @@ class Scanner:
         """
         self.lexemeBegin = 0
         self.forward = 0
+        self.state = "START"
+        self.tokens = []
+        self.defined_vars = []
+        self.defined_funcs = []
+        self.expect_var = False
+        self.expect_func = False
 
     def handle_single_char(self, char: str) -> None:
         """
@@ -132,6 +143,7 @@ class Scanner:
         next_char = self.next_char()
         if next_char == ":":
             self.tokens.append(("TYPE_DEC", "::"))
+            self.expect_var = True
         else:
             # TODO: Add error handling for unexpected characters
             raise ValueError(f"Unexpected character '{next_char}' after ':'")
@@ -152,6 +164,7 @@ class Scanner:
         """
         self.tokens.append(("VAR", lexeme))
         self.defined_vars.append(lexeme)
+        self.expect_var = False
 
     def handle_python_code(self, lexeme: str) -> None:
         """
@@ -159,14 +172,18 @@ class Scanner:
         """
         if lexeme in self.defined_vars:
             self.tokens.append(("VAR", lexeme))
+            self.expected_var = False
         elif lexeme in self.defined_funcs:
             self.tokens.append(("FUNC", lexeme))
+            self.expected_func = False
         else:
             self.tokens.append(("PYTHON_CODE", lexeme))
 
     def handle_func_token(self, lexeme):
         self.defined_funcs.append(lexeme)
         self.tokens.append(("FUNC", lexeme))
+        self.expect_func = False
+        self.expect_var = False
 
     def scan_token(self) -> list:
         """
@@ -177,8 +194,7 @@ class Scanner:
             list: A list of tokens in the format <Token Type, Token Value>.
         """
         lexeme = ""
-        expect_var = False  # This flag will be set to True after encountering TYPE_DEC
-        expect_func = False
+
         while not self.end_of_file():
 
             char = self.next_char()
@@ -191,12 +207,11 @@ class Scanner:
                     self.handle_single_char(char)
                 elif char == ":":
                     self.handle_type_declaration()
-                    expect_var = True  # After TYPE_DEC, the next token is expected to be a variable
                 elif char.isalnum() or char == "_":  # Collect alphanumeric variables/types
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
-                        if next_char in ["{", "}", ";", "(", ")", ","]:  # TODO: Should we add ::?
+                        if next_char in [";", "{", "}", "(", ")", ","]:  # TODO: Should we add ::?
                             self.forward -= 1  # Unread the non-alphanumeric, non-space character
                             break
                         elif (
@@ -205,25 +220,17 @@ class Scanner:
                             break
                         else:
                             lexeme += next_char
-                    # If the previous token was TYPE_DEC, this must be a VAR unless it's a type keyword
-                    if expect_var:
-                        if lexeme in self.type_tokens:  # If it's a type token, handle it as a type
-                            self.handle_type_token(lexeme)
-                        elif lexeme == "def":
-                            self.tokens.append(("DEF", lexeme)) # If it's "def", handle it as DEF
-                        else:
-                            self.handle_variable(lexeme)  # Otherwise, it's a variable
-                        expect_var = False  # Reset the flag after processing
-                    else:
-                        if lexeme in self.type_tokens:
-                            self.handle_type_token(lexeme)
-                        elif lexeme == "def":
-                            self.tokens.append(("DEF", lexeme))
-                        else:
-                            self.handle_python_code(lexeme)  # Treat it as general Python code
-                    # if previous token was def then expect func
-                    if expect_func:
+                    if lexeme in self.type_tokens: # If it's a type token, handle it as a type
+                        self.handle_type_token(lexeme)
+                    elif lexeme == "def": # If it's "def", handle it as DEF
+                        self.tokens.append(("DEF", lexeme))
+                        self.expect_func = True
+                    elif self.expect_func: # if previous token was def then expect func, FUNC takes precedence than VAR
                         self.handle_func_token(lexeme)
+                    elif self.expect_var:  # If previous token was :: then expect var
+                        self.handle_variable(lexeme)
+                    else:
+                        self.handle_python_code(lexeme)  # Treat it as general Python code
                     lexeme = ""
                 else:
                     # Unchecked Python code
@@ -236,7 +243,7 @@ class Scanner:
                         lexeme += next_char
                     self.handle_python_code(lexeme)
                     lexeme = ""
-                expect_func = self.tokens[-1][0] == "DEF"
+                self.expect_func = self.tokens[-1][0] == "DEF"
 
         return self.tokens
 
@@ -249,12 +256,14 @@ if __name__ == "__main__":
     # code = "int :: x_a; list_a :: y;"
     # [('TYPE', 'int'), ('TYPE_DEC', '::'), ('VAR', 'x_a'), ('SEMICOLON', ';'), ('PYTHON_CODE', 'list_a'), ('TYPE_DEC', '::'), ('VAR', 'y'), ('SEMICOLON', ';')]
     code = "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}"
-    code2 = "string :: def say_hello_world(){ string :: text = 'hello world'; print(text);}"
+    code2 = "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}"
     # The above test case needs to be worked on
     scanner.read_code(code)
     tokens = scanner.scan_token()
     print(tokens)
+    
     print("")
+    
     scanner.read_code(code2)
     tokens = scanner.scan_token()
     print(tokens)
