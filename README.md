@@ -9,7 +9,10 @@ Nikolaus Holzer: nh2677
 
 # Tokenizing
 For grading please run `python scanner` which will execute the `__main__.py` file in the scanner dir if ```source ./scanner.sh``` fails. 
-This will run 5 examples shown below and parse them. Note: we only include 5 simple examples below because the output is too long to be included in the README, more complicated examples will be printed by the script which shows the expected output. 
+
+This will run 5 examples shown below and parse them. 
+
+Note: we only include 5 simple examples below because the output is too long to be included in the README, more complicated examples will be printed by the script which shows the expected output. The expected output included below has a different format of printed to make it looks better in README.
 
 ## Lexical grammar
 We define thirteen new token classes that the viper tokenizer recognizes.
@@ -95,7 +98,8 @@ Additionally, here are examples of how our program handles errors. Our scanner h
 ```
 Code:
  str:: t = 'hello world!';
-['<TYPE, str>', '<TYPE_DEC, ::>', '<VAR, t>', '<ASSIGN, =>', "<PYTHON_CODE, 'hello>", "<PYTHON_CODE, world!'>", '<SEMICOLON, ;>']
+<TYPE, str>, <TYPE_DEC, ::>, <VAR, t>, <ASSIGN, =>, <PYTHON_CODE, 'hello>, 
+<PYTHON_CODE, world!'>, <SEMICOLON, ;>
 ```
 
 **Mixing ints and strs:** We consider the case where a variable name starts with numbers, or conversely an integer includes digits. Our compiler results to panic mode deleting str characters and `_` until it reaches a valid token which may be more ints or a whitespace.
@@ -103,14 +107,14 @@ Code:
 ```
 Code:
  int :: 123x_a;
-['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, x_a>', '<SEMICOLON, ;>']
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, x_a>, <SEMICOLON, ;>
 ```
 
 **Invalid characters:** Our default error handling strategy for characters that are not valid in python is to pass them through as python code. Since they are not recognized by Viper, the scanner assumes that they are valid python code and tokenizes them. In this case the Python interpreter will notify the programmer of the invalid input. 
 
 ```Code:
  int :: a = @;
-['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, a>', '<ASSIGN, =>', '<PYTHON_CODE, @>', '<SEMICOLON, ;>']
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, a>, <ASSIGN, =>, <PYTHON_CODE, @>, <SEMICOLON, ;>
 ```
 
 We have more test cases that are able to output expected output based on our language in scanner/__main__.py, you are able to see the output from running the shell script as instructed previously.
