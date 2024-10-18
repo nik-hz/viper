@@ -2,13 +2,14 @@
 Angel Cui: lc3542\
 Nikolaus Holzer: nh2677
 
-# For TAs: shell script to set up virtual environment and run 5 code examples for the scanner
+# For TAs: shell script to set up virtual environment and run full code examples for the scanner
 1) Make sure you are in the viper directory.
 2) Run ```chmod +x scanner.sh``` to ensure executable access to the shell script.
 3) Run ```source ./scanner.sh```. This will activate a virtual environment called viper and set you up with required dependencies, and run the five code examples and return the outputs.
 
 # Tokenizing
-For grading please run `python scanner` which will execute the `__main__.py` file in the scanner dir. This will run the examples shown below and parse them. Note: we print out two token tuples at a time for conciness in the readme, but the code output will have one token per line. 
+For grading please run `python scanner` which will execute the `__main__.py` file in the scanner dir if ```source ./scanner.sh``` fails. 
+This will run 5 examples shown below and parse them. Note: we only include 5 simple examples below because the output is too long to be included in the README, more complicated examples will be printed by the script which shows the expected output. 
 
 ## Lexical grammar
 We define thirteen new token classes that the viper tokenizer recognizes.
@@ -50,7 +51,7 @@ We implement panic mode for handling malformed lexemes of the types that we are 
 ## Tokenizing Examples
 
 We show examples that illustrate how tokenized viper code looks like.
-We only include the short examples here, when you run out scanner through the scanner.sh as instructed above, you would be able to see the full list of input and output (same as expected output).
+We only include the short examples below, when you run our scanner as instructed above, you would be able to see the full list of input and output (same as expected output).
 
 ```Code:
 
