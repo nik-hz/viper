@@ -21,26 +21,22 @@ We define six new token classes that the viper tokenizer recognizes.
 3) `<SEMICOLON>`: Semicolon → `";"`
    1) The semicolon terminates logical lines, offering an alternative to python's newline delinated logical lines.
    2) Example `print("Hello world!")`
-4) `<LPAREN>`: Paren left → `"("`
-   1) Left parenthesis
-5) `<RPAREN>`: Paren right → `")"`
-   1) Right parenthesis
-6) `<LCBRACE>`: Curly brace left → `"{"`
+4) `<LCBRACE>`: Curly brace left → `"{"`
    1) Curly braces define blocks of code (such as function bodies or control flow syntax) and replaces pythons indentation based syntax.
    2) Example ```if a == True: {print("Hello world!");}```
-7) `<RCBRACE>`: Curly brace right → `"}"`
+5) `<RCBRACE>`: Curly brace right → `"}"`
    1) Curly braces define blocks of code (such as function bodies or control flow syntax) and replaces pythons indentation based syntax.
    2) Example ```if a == True: {print("Hello world!");}```
-8) `<VAR>`: Variable name → `"a"`
+6) `<VAR>`: Variable name → `"a"`
    1) Any variable name that come after `<TYPE> <TYPE_DEC>`.
    2) Example ```int :: a;```
-9) `<FUNC>`: Function name → `"a"`
+7) `<FUNC>`: Function name → `"a"`
    1) Any function name that come after `<DEF>`.
-10) `<DEF>`: Function definition → `"def"`
+8) `<DEF>`: Function definition → `"def"`
    1) Function definition
-11) `<ASSIGN>`: Defines the `=` operator which assigns values to variables.
-12) `<PYTHON_CODE>`: All regular python tokens → special token for unchecked token, viper relies on python interpreter for correctness.
-13) `<OP>`: all type operators → `["**", "*", "+", "-", "//", "/", "%"]`
+9) `<ASSIGN>`: Defines the `=` operator which assigns values to variables.
+10) `<PYTHON_CODE>`: All regular python tokens → special token for unchecked token, viper relies on python interpreter for correctness.
+11) `<OP>`: all type operators → `["**", "*", "+", "-", "//", "/", "%"]`
 
 ## Error handling
 Our lexical parser only handles errors directly related to malformed type declarations. 
