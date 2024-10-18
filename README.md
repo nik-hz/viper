@@ -9,6 +9,7 @@ Nikolaus Holzer: nh2677
 
 # Tokenizing
 For grading please run `python scanner` which will execute the `__main__.py` file in the scanner dir if ```source ./scanner.sh``` fails. 
+For grading please refer to lexical_dfa.jpg for the dfa for the scanner.
 
 This will run 5 examples shown below and parse them. 
 
