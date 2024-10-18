@@ -29,6 +29,8 @@ class Scanner:
             "DEF",
             "VAR",
             "PYTHON_CODE",
+            "FUNC",
+            "OP"
         }
 
         # Updated list of reserved type tokens
@@ -52,7 +54,7 @@ class Scanner:
         ]
 
         # Updated list of reserved single-character tokens
-        self.single_char_tokens = [";", "{", "}", ",", "="]
+        self.single_char_tokens = [";", "{", "}", "(", ")",",", "="]
 
         # operators, not necessaroly single tokens
         self.operators = ["**", "*", "+", "-", "//", "/", "%"]
@@ -148,6 +150,10 @@ class Scanner:
             self.tokens.append(("LBRACE", "{"))
         elif char == "}":
             self.tokens.append(("RBRACE", "}"))
+        elif char == "(":
+            self.tokens.append(("LPAREN", "("))
+        elif char == ")":
+            self.tokens.append(("RPAREN", ")"))
         elif char == "=":
             self.tokens.append(("ASSIGN", "="))
         elif char == ",":
