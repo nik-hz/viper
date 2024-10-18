@@ -40,6 +40,7 @@ We define six new token classes that the viper tokenizer recognizes.
    1) Function definition
 11) `<ASSIGN>`: Defines the `=` operator which assigns values to variables.
 12) `<PYTHON_CODE>`: All regular python tokens → special token for unchecked token, viper relies on python interpreter for correctness.
+13) `<OP>`: all type operators → `["**", "*", "+", "-", "//", "/", "%"]`
 
 ## Error handling
 Our lexical parser only handles errors directly related to malformed type declarations. 
