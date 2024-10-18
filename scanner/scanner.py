@@ -52,7 +52,7 @@ class Scanner:
         ]
 
         # Updated list of reserved single-character tokens
-        self.single_char_tokens = [";", "{", "}", "(", ")", ",", "="]
+        self.single_char_tokens = [";", "{", "}", ",", "="]
 
         # operators, not necessaroly single tokens
         self.operators = ["**", "*", "+", "-", "//", "/", "%"]
@@ -148,10 +148,6 @@ class Scanner:
             self.tokens.append(("LBRACE", "{"))
         elif char == "}":
             self.tokens.append(("RBRACE", "}"))
-        elif char == "(":
-            self.tokens.append(("LPAREN", "("))
-        elif char == ")":
-            self.tokens.append(("RPAREN", ")"))
         elif char == "=":
             self.tokens.append(("ASSIGN", "="))
         elif char == ",":
@@ -223,7 +219,7 @@ class Scanner:
     def scan_token(self) -> list:
         """
         Scans the input code for specific tokens using finite automata transitions.
-        Handles tokens.
+        Handles tokens, including collapsing multiple spaces into a single space token.
 
         Returns:
             list: A list of tokens in the format (Token Type, Token Value).
@@ -234,8 +230,9 @@ class Scanner:
 
             char = self.next_char()
 
+            # Handle spaces by tokenizing one space and skipping consecutive spaces
             if char.isspace():
-                continue
+                continue  # Move to the next character after handling spaces
 
             if self.state == "START":  # TODO check for [a-z](
                 if char in self.single_char_tokens:
@@ -282,9 +279,7 @@ class Scanner:
                     elif lexeme == "def":  # If it's "def", handle it as DEF
                         self.tokens.append(("DEF", lexeme))
                         self.expect_func = True
-                    elif (
-                        self.expect_func
-                    ):  # if previous token was def then expect func, FUNC takes precedence than VAR
+                    elif self.expect_func:  # if previous token was def then expect func, FUNC takes precedence than VAR
                         self.handle_func_token(lexeme)
                     elif self.expect_var:  # If previous token was :: then expect var
                         self.handle_variable(lexeme)
