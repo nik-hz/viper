@@ -71,9 +71,9 @@ class Scanner:
         for line in input_code.splitlines():
             if not line.strip().startswith("#"):
                 line = line.split("#", 1)[0].rstrip()
-            # Add the cleaned line if it's not empty
-            if line:
-                cleaned_code.append(line)
+                # Add the cleaned line if it's not empty
+                if line:
+                    cleaned_code.append(line)
 
         return " ".join(cleaned_code)
 
@@ -249,6 +249,14 @@ class Scanner:
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
+
+                        if self.expect_var and next_char.isnumeric():
+                            # panic mode
+                            while next_char.isnumeric():
+                                next_char = self.next_char()
+                            # self.forward -= 1
+                            lexeme = ""
+                            expect_number = False
 
                         if expect_number and (next_char.isalpha() or next_char == "_"):
                             # panic mode, start deleting chars until we reach a space or a number
