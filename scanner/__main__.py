@@ -66,6 +66,19 @@ if __name__ == "__main__":
         "int :: a = @;",
     ]
 
+    test = """
+        from math import sqrt;
+        
+        NoneType :: def nthFib(int :: n):{
+            int :: res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
+            print(res,'is',str(n)+'th fibonacci number');
+        }
+        nthFib(12);
+        """
+
+    run_scanner(test)
+    exit()
+
     # Loop through each test case and run the scanner
     for idx, code in enumerate(test_cases):
         print(f"\nRunning test case {idx + 1}:")
