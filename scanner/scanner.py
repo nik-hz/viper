@@ -54,6 +54,9 @@ class Scanner:
         # Updated list of reserved single-character tokens
         self.single_char_tokens = [";", "{", "}", "(", ")", ",", "="]
 
+        # operators, not necessaroly single tokens
+        self.operators = ["**", "*", "+", "-", "//", "/", "%"]
+
         # keep track of vars that have been defined already
         # This should be fine even without scope I
         self.defined_vars = []
@@ -61,6 +64,7 @@ class Scanner:
 
         self.expect_var = False  # This flag will be set to True after encountering TYPE_DEC
         self.expect_func = False  # This flag will be set to True after encountering DEF
+        self.expect_func_delay = False  # TODO to help with managing parens after funcs
 
     def remove_comments_and_newline(self, input_code):
         cleaned_code = []
@@ -153,6 +157,17 @@ class Scanner:
         elif char == ",":
             self.tokens.append(("PYTHON_CODE", ","))
 
+    def handle_op(self, char):
+        next_char = self.next_char()
+        if next_char in self.operators:  # double operators
+            if char + next_char == "**":
+                self.tokens.append(("OP", "**"))
+            elif char + next_char == "//":
+                self.tokens.append(("OP", "//"))
+        else:
+            self.tokens.append(("OP", char))
+            self.forward -= 1
+
     def handle_colon(self) -> None:
         """
         Handle type declaration for "::".
@@ -161,12 +176,12 @@ class Scanner:
         if next_char == ":":
             self.tokens.append(("TYPE_DEC", "::"))
             self.expect_var = True
-        elif next_char == ("{" or " "):
+        elif next_char == " ":
             self.tokens.append(("PYTHON_CODE", ":"))
             self.expect_var = False
         else:
-            # TODO: Add error handling for unexpected characters
-            raise ValueError(f"Unexpected character '{next_char}' after ':'")
+            self.tokens.append(("PYTHON_CODE", ":"))
+            self.forward -= 1
 
     def handle_type_token(self, lexeme: str) -> None:
         """
@@ -222,21 +237,28 @@ class Scanner:
             if char.isspace():
                 continue
 
-            if self.state == "START":
+            if self.state == "START":  # TODO check for [a-z](
                 if char in self.single_char_tokens:
                     self.handle_single_char(char)
                 elif char == ":":
                     self.handle_colon()
+                elif char in self.operators:
+                    self.handle_op(char)
                 elif char.isalnum() or char == "_":  # Collect alphanumeric variables/types
                     expect_number = char.isnumeric()  # true if we are at a number
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
+
                         if expect_number and (next_char.isalpha() or next_char == "_"):
                             # panic mode, start deleting chars until we reach a space or a number
                             continue
+
                         if next_char in self.single_char_tokens:
                             self.forward -= 1  # Unread the non-alphanumeric, non-space character
+                            break
+                        if next_char in self.operators:
+                            self.forward -= 1
                             break
                         elif next_char == ":" and lexeme in self.type_tokens:
                             # Case where type:: is misspelt

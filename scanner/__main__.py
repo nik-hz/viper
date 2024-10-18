@@ -67,28 +67,17 @@ if __name__ == "__main__":
     ]
 
     test = """
-        # Function for nth Fibonacci number
-        int :: def Fibonacci(int :: n):{
-            if n<= 0:{
-                print("Incorrect input");
-            }
-            # First Fibonacci number is 0
-            elif n == 1:{
-                return 0;
-            }
-            # Second Fibonacci number is 1
-            elif n == 2:{
-                return 1;
-            }
-            else:{
-                return Fibonacci(n-1)+Fibonacci(n-2);
-            }
+        from math import sqrt;
+        
+        NoneType :: def nthFib(int :: n):{
+            int :: res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
+            print(res,'is',str(n)+'th fibonacci number');
         }
-
-        print(Fibonacci(10));
+        nthFib(12);
         """
 
-    # run_scanner(test)
+    run_scanner(test)
+    exit()
 
     # Loop through each test case and run the scanner
     for idx, code in enumerate(test_cases):
