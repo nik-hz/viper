@@ -150,9 +150,12 @@ class Scanner:
         if next_char == ":":
             self.tokens.append(("TYPE_DEC", "::"))
             self.expect_var = True
+        elif next_char == " ":
+            self.tokens.append(("PYTHON_CODE", ":"))
+            self.expect_var = False
         else:
-            # TODO: Add error handling for unexpected characters
-            raise ValueError(f"Unexpected character '{next_char}' after ':'")
+            self.tokens.append(("PYTHON_CODE", ":"))
+            self.forward -= 1
 
     def handle_type_token(self, lexeme: str) -> None:
         """
@@ -194,7 +197,7 @@ class Scanner:
     def scan_token(self) -> list:
         """
         Scans the input code for specific tokens using finite automata transitions.
-        Handles tokens.
+        Handles tokens, including collapsing multiple spaces into a single space token.
 
         Returns:
             list: A list of tokens in the format (Token Type, Token Value).
@@ -205,8 +208,17 @@ class Scanner:
 
             char = self.next_char()
 
+            # Handle spaces by tokenizing one space and skipping consecutive spaces
             if char.isspace():
-                continue
+                # Tokenize a single space
+                self.tokens.append(("SPACE", " "))
+                # Skip all consecutive spaces
+                while not self.end_of_file():
+                    next_char = self.next_char()
+                    if not next_char.isspace():
+                        self.forward -= 1  # Go back one character if the next one is not a space
+                        break
+                continue  # Move to the next character after handling spaces
 
             if self.state == "START":
                 if char in self.single_char_tokens:
@@ -217,7 +229,10 @@ class Scanner:
                     lexeme += char
                     while not self.end_of_file():
                         next_char = self.next_char()
-                        if next_char in self.single_char_tokens:  # TODO: Should we add ::?
+                        if expect_number and (next_char.isalpha() or next_char == "_"):
+                            # panic mode, start deleting chars until we reach a space or a number
+                            continue
+                        elif next_char in self.single_char_tokens:
                             self.forward -= 1  # Unread the non-alphanumeric, non-space character
                             break
                         elif (
@@ -231,7 +246,7 @@ class Scanner:
                     elif lexeme == "def": # If it's "def", handle it as DEF
                         self.tokens.append(("DEF", lexeme))
                         self.expect_func = True
-                    elif self.expect_func: # if previous token was def then expect func, FUNC takes precedence than VAR
+                    elif self.expect_func:  # if previous token was def then expect func, FUNC takes precedence than VAR
                         self.handle_func_token(lexeme)
                     elif self.expect_var:  # If previous token was :: then expect var
                         self.handle_variable(lexeme)

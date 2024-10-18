@@ -19,7 +19,42 @@ if __name__ == "__main__":
         "int :: x_a; list_a :: y;",
         "int :: def func(int :: a, int :: b){ int :: c = a + b; return c;}",
         "str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}",
-        # Add more test cases as needed
+        "int :: def func(int :: a, int :: b):{ int :: c = a + b; return c;}",
+        """
+        from math import sqrt;
+        
+        NoneType :: def nthFib(int :: n):{
+            int :: res = (((1+ sqrt (5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
+            print(res,'is',str(n)+'th fibonacci number');
+        }
+        nthFib(12);
+        """,
+        """
+        # Function for nth Fibonacci number
+        int :: def Fibonacci(int :: n):{
+            if n<= 0:
+                print("Incorrect input")
+            # First Fibonacci number is 0
+            elif n == 1:
+                return 0
+            # Second Fibonacci number is 1
+            elif n == 2:{
+                return 1;
+            }
+            else:{
+                return Fibonacci(n-1)+Fibonacci(n-2);
+            }
+        }
+
+        print(Fibonacci(10)) # our code even handles inline comments!
+        """,
+    ]
+
+    error_cases = [
+        "str:: t = 'hello world!';",
+        "int :: 123x_a;",
+        "int :: a = 123abc456;",
+        "int :: a = @;",
     ]
 
     # Loop through each test case and run the scanner
