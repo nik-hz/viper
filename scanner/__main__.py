@@ -33,7 +33,7 @@ if __name__ == "__main__":
         from math import sqrt;
         
         NoneType :: def nthFib(int :: n):{
-            int :: res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
+            int :: res = (((1+ sqrt (5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
             print(res,'is',str(n)+'th fibonacci number');
         }
         nthFib(12);
