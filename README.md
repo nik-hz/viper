@@ -2,16 +2,21 @@
 Angel Cui: lc3542\
 Nikolaus Holzer: nh2677
 
-# For TAs: shell script to set up virtual environment and run 5 code examples for the scanner
+# For TAs: shell script to set up virtual environment and run full code examples for the scanner
 1) Make sure you are in the viper directory.
 2) Run ```chmod +x scanner.sh``` to ensure executable access to the shell script.
 3) Run ```source ./scanner.sh```. This will activate a virtual environment called viper and set you up with required dependencies, and run the five code examples and return the outputs.
 
 # Tokenizing
-For grading please run `python scanner` which will execute the `__main__.py` file in the scanner dir. This will run the examples shown below and parse them. Note: we print out two token tuples at a time for conciness in the readme, but the code output will have one token per line. 
+For grading please run `python scanner` which will execute the `__main__.py` file in the scanner dir if ```source ./scanner.sh``` fails. 
+For grading please refer to lexical_dfa.jpg for the dfa for the scanner.
+
+This will run 5 examples shown below and parse them. 
+
+Note: we only include 5 simple examples below because the output is too long to be included in the README, more complicated examples will be printed by the script which shows the expected output. The expected output included below has a different format of printed to make it looks better in README.
 
 ## Lexical grammar
-We define six new token classes that the viper tokenizer recognizes.
+We define thirteen new token classes that the viper tokenizer recognizes.
 1) ```<TYPE_DEC>```: type declaration token → ``"::"``
    1) The ```::``` token will be used to declare the type of a variable or return value. It serves as the separator between variable names and their type annotations.
    2) Example: ```int :: x = 1;```
@@ -49,129 +54,41 @@ We implement panic mode for handling malformed lexemes of the types that we are 
 
 ## Tokenizing Examples
 
-We show examples that illustrate how tokenized viper code looks like. 
+We show examples that illustrate how tokenized viper code looks like.
+We only include the short examples below, when you run our scanner as instructed above, you would be able to see the full list of input and output (same as expected output).
+
 ```Code:
 
 Running test case 1:
 Code:
  int :: x_a = 10; list :: y = range(0,x_a); for i in y: { print(i); }
-['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, x_a>']
-['<ASSIGN, =>', '<PYTHON_CODE, 10>', '<SEMICOLON, ;>']
-['<TYPE, list>', '<TYPE_DEC, ::>', '<VAR, y>']
-['<ASSIGN, =>', '<TYPE, range>', '<LPAREN, (>']
-['<PYTHON_CODE, 0>', '<PYTHON_CODE, ,>', '<VAR, x_a>']
-['<RPAREN, )>', '<SEMICOLON, ;>', '<PYTHON_CODE, for>']
-['<PYTHON_CODE, i>', '<PYTHON_CODE, in>', '<PYTHON_CODE, y:>']
-['<LBRACE, {>', '<PYTHON_CODE, print>', '<LPAREN, (>']
-['<PYTHON_CODE, i>', '<RPAREN, )>', '<SEMICOLON, ;>']
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, x_a>, <ASSIGN, =>, <PYTHON_CODE, 10>,
+<SEMICOLON, ;>, <TYPE, list>, <TYPE_DEC, ::>, <VAR, y>, <ASSIGN, =>, 
+<TYPE, range>, <LPAREN, (>, <PYTHON_CODE, 0>, <PYTHON_CODE, ,>, <VAR, x_a>,
+<RPAREN, )>, <SEMICOLON, ;>, <PYTHON_CODE, for>, <PYTHON_CODE, i>, 
+<PYTHON_CODE, in>, <PYTHON_CODE, y:>, <LBRACE, {>, <PYTHON_CODE, print>, 
+<LPAREN, (>, <PYTHON_CODE, i>, <RPAREN, )>, <SEMICOLON, ;>, <RBRACE, }>
 ----------------------------------------
 
 Running test case 2:
 Code:
  str :: def say_hello_world(){ string :: text = 'hello world'; print(text);}
-['<TYPE, str>', '<TYPE_DEC, ::>', '<DEF, def>']
-['<FUNC, say_hello_world>', '<LPAREN, (>', '<RPAREN, )>']
-['<LBRACE, {>', '<PYTHON_CODE, string>', '<TYPE_DEC, ::>']
-['<VAR, text>', '<ASSIGN, =>', "<PYTHON_CODE, 'hello>"]
-["<PYTHON_CODE, world'>", '<SEMICOLON, ;>', '<PYTHON_CODE, print>']
-['<LPAREN, (>', '<VAR, text>', '<RPAREN, )>']
+<TYPE, str>, <TYPE_DEC, ::>, <DEF, def>, <FUNC, say_hello_world>, <LPAREN, (>,
+<RPAREN, )>, <LBRACE, {>, <PYTHON_CODE, string>, <TYPE_DEC, ::>, <VAR, text>,
+<ASSIGN, =>, <PYTHON_CODE, 'hello>, <PYTHON_CODE, world'>, <SEMICOLON, ;>,
+<PYTHON_CODE, print>, <LPAREN, (>, <VAR, text>, <RPAREN, )>, <SEMICOLON, ;>,
+<RBRACE, }>
 ----------------------------------------
 
 Running test case 3:
 Code:
  int :: def func(int :: a, int :: b):{ int :: c = a + b; return c;}
-['<TYPE, int>', '<TYPE_DEC, ::>', '<DEF, def>']
-['<FUNC, func>', '<LPAREN, (>', '<TYPE, int>']
-['<TYPE_DEC, ::>', '<VAR, a>', '<PYTHON_CODE, ,>']
-['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, b>']
-['<RPAREN, )>', '<PYTHON_CODE, :>', '<TYPE, int>']
-['<TYPE_DEC, ::>', '<VAR, c>', '<ASSIGN, =>']
-['<VAR, a>', '<PYTHON_CODE, +>', '<VAR, b>']
-['<SEMICOLON, ;>', '<PYTHON_CODE, return>', '<VAR, c>']
-----------------------------------------
-
-Running test case 4:
-Code:
- 
-        from math import sqrt;
-        
-        NoneType :: def nthFib(int :: n):{
-            int :: res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
-            print(res,'is',str(n)+'th fibonacci number');
-        }
-        nthFib(12);
-        
-['<PYTHON_CODE, from>', '<PYTHON_CODE, math>', '<PYTHON_CODE, import>']
-['<PYTHON_CODE, sqrt>', '<SEMICOLON, ;>', '<TYPE, NoneType>']
-['<TYPE_DEC, ::>', '<DEF, def>', '<FUNC, nthFib>']
-['<LPAREN, (>', '<TYPE, int>', '<TYPE_DEC, ::>']
-['<VAR, n>', '<RPAREN, )>', '<PYTHON_CODE, :>']
-['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, res>']
-['<ASSIGN, =>', '<LPAREN, (>', '<LPAREN, (>']
-['<LPAREN, (>', '<PYTHON_CODE, 1+>', '<LPAREN, (>']
-['<PYTHON_CODE, 5>', '<RPAREN, )>', '<RPAREN, )>']
-['<PYTHON_CODE, **n>', '<RPAREN, )>', '<PYTHON_CODE, ->']
-['<LPAREN, (>', '<LPAREN, (>', '<PYTHON_CODE, 1->']
-['<LPAREN, (>', '<PYTHON_CODE, 5>', '<RPAREN, )>']
-['<RPAREN, )>', '<RPAREN, )>', '<PYTHON_CODE, **n>']
-['<RPAREN, )>', '<PYTHON_CODE, />', '<LPAREN, (>']
-['<PYTHON_CODE, 2***>', '<LPAREN, (>', '<PYTHON_CODE, 5>']
-['<RPAREN, )>', '<RPAREN, )>', '<SEMICOLON, ;>']
-['<PYTHON_CODE, print>', '<LPAREN, (>', '<VAR, res>']
-['<PYTHON_CODE, ,>', "<PYTHON_CODE, 'is'>", '<PYTHON_CODE, ,>']
-['<TYPE, str>', '<LPAREN, (>', '<VAR, n>']
-['<RPAREN, )>', "<PYTHON_CODE, +'th>", '<PYTHON_CODE, fibonacci>']
-["<PYTHON_CODE, number'>", '<RPAREN, )>', '<SEMICOLON, ;>']
-['<RBRACE, }>', '<FUNC, nthFib>', '<LPAREN, (>']
-['<PYTHON_CODE, 12>', '<RPAREN, )>', '<SEMICOLON, ;>']
-----------------------------------------
-
-Running test case 5:
-Code:
- 
-        # Function for nth Fibonacci number
-        int :: def Fibonacci(int :: n):{
-            if n<= 0:
-                print("Incorrect input")
-            # First Fibonacci number is 0
-            elif n == 1:
-                return 0
-            # Second Fibonacci number is 1
-            elif n == 2:{
-                return 1;
-            }
-            else:{
-                return Fibonacci(n-1)+Fibonacci(n-2);
-            }
-        }
-
-        print(Fibonacci(10)) # our code even handles inline comments!
-        
-['<PYTHON_CODE, #>', '<PYTHON_CODE, Function>', '<PYTHON_CODE, for>']
-['<PYTHON_CODE, nth>', '<PYTHON_CODE, Fibonacci>', '<PYTHON_CODE, number>']
-['<TYPE, int>', '<TYPE_DEC, ::>', '<DEF, def>']
-['<FUNC, Fibonacci>', '<LPAREN, (>', '<TYPE, int>']
-['<TYPE_DEC, ::>', '<VAR, n>', '<RPAREN, )>']
-['<PYTHON_CODE, :>', '<PYTHON_CODE, if>', '<PYTHON_CODE, n<>']
-['<ASSIGN, =>', '<PYTHON_CODE, 0:>', '<PYTHON_CODE, print>']
-['<LPAREN, (>', '<PYTHON_CODE, "Incorrect>', '<PYTHON_CODE, input">']
-['<RPAREN, )>', '<PYTHON_CODE, #>', '<PYTHON_CODE, First>']
-['<FUNC, Fibonacci>', '<PYTHON_CODE, number>', '<PYTHON_CODE, is>']
-['<PYTHON_CODE, 0>', '<PYTHON_CODE, elif>', '<VAR, n>']
-['<ASSIGN, =>', '<ASSIGN, =>', '<PYTHON_CODE, 1:>']
-['<PYTHON_CODE, return>', '<PYTHON_CODE, 0>', '<PYTHON_CODE, #>']
-['<PYTHON_CODE, Second>', '<FUNC, Fibonacci>', '<PYTHON_CODE, number>']
-['<PYTHON_CODE, is>', '<PYTHON_CODE, 1>', '<PYTHON_CODE, elif>']
-['<VAR, n>', '<ASSIGN, =>', '<ASSIGN, =>']
-['<PYTHON_CODE, 2:>', '<LBRACE, {>', '<PYTHON_CODE, return>']
-['<PYTHON_CODE, 1>', '<SEMICOLON, ;>', '<RBRACE, }>']
-['<PYTHON_CODE, else:>', '<LBRACE, {>', '<PYTHON_CODE, return>']
-['<FUNC, Fibonacci>', '<LPAREN, (>', '<PYTHON_CODE, n-1>']
-['<RPAREN, )>', '<PYTHON_CODE, +Fibonacci>', '<LPAREN, (>']
-['<PYTHON_CODE, n-2>', '<RPAREN, )>', '<SEMICOLON, ;>']
-['<RBRACE, }>', '<RBRACE, }>', '<PYTHON_CODE, print>']
-['<LPAREN, (>', '<FUNC, Fibonacci>', '<LPAREN, (>']
-['<PYTHON_CODE, 10>', '<RPAREN, )>', '<RPAREN, )>']
+<TYPE, int>, <TYPE_DEC, ::>, <DEF, def>, <FUNC, func>, <LPAREN, (>,
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, a>, <PYTHON_CODE, ,>, <TYPE, int>,
+<TYPE_DEC, ::>, <VAR, b>, <RPAREN, )>, <PYTHON_CODE, :>, <LBRACE, {>,
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, c>, <ASSIGN, =>, <VAR, a>,
+<OP, +>, <VAR, b>, <SEMICOLON, ;>, <PYTHON_CODE, return>, <VAR, c>,
+<SEMICOLON, ;>, <RBRACE, }>
 ----------------------------------------
 ```
 
@@ -182,7 +99,8 @@ Additionally, here are examples of how our program handles errors. Our scanner h
 ```
 Code:
  str:: t = 'hello world!';
-['<TYPE, str>', '<TYPE_DEC, ::>', '<VAR, t>', '<ASSIGN, =>', "<PYTHON_CODE, 'hello>", "<PYTHON_CODE, world!'>", '<SEMICOLON, ;>']
+<TYPE, str>, <TYPE_DEC, ::>, <VAR, t>, <ASSIGN, =>, <PYTHON_CODE, 'hello>, 
+<PYTHON_CODE, world!'>, <SEMICOLON, ;>
 ```
 
 **Mixing ints and strs:** We consider the case where a variable name starts with numbers, or conversely an integer includes digits. Our compiler results to panic mode deleting str characters and `_` until it reaches a valid token which may be more ints or a whitespace.
@@ -190,15 +108,18 @@ Code:
 ```
 Code:
  int :: 123x_a;
-['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, 123>', '<SEMICOLON, ;>']
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, x_a>, <SEMICOLON, ;>
 ```
 
 **Invalid characters:** Our default error handling strategy for characters that are not valid in python is to pass them through as python code. Since they are not recognized by Viper, the scanner assumes that they are valid python code and tokenizes them. In this case the Python interpreter will notify the programmer of the invalid input. 
 
-```Code:
- int :: a = @;
-['<TYPE, int>', '<TYPE_DEC, ::>', '<VAR, a>', '<ASSIGN, =>', '<PYTHON_CODE, @>', '<SEMICOLON, ;>']
 ```
+Code:
+ int :: a = @;
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, a>, <ASSIGN, =>, <PYTHON_CODE, @>, <SEMICOLON, ;>
+```
+
+We have more test cases that are able to output expected output based on our language in scanner/__main__.py, you are able to see the output from running the shell script as instructed previously.
 
 # Development
 For developpers, make sure you are in the viper directory. and run ```source ./setup.sh```. 
