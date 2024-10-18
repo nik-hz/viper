@@ -52,7 +52,7 @@ class Scanner:
         ]
 
         # Updated list of reserved single-character tokens
-        self.single_char_tokens = [";", "{", "}", "(", ")", ",", "="]
+        self.single_char_tokens = [";", "{", "}", ",", "="]
 
         # keep track of vars that have been defined already
         # This should be fine even without scope I
@@ -144,10 +144,6 @@ class Scanner:
             self.tokens.append(("LBRACE", "{"))
         elif char == "}":
             self.tokens.append(("RBRACE", "}"))
-        elif char == "(":
-            self.tokens.append(("LPAREN", "("))
-        elif char == ")":
-            self.tokens.append(("RPAREN", ")"))
         elif char == "=":
             self.tokens.append(("ASSIGN", "="))
         elif char == ",":
@@ -221,14 +217,6 @@ class Scanner:
 
             # Handle spaces by tokenizing one space and skipping consecutive spaces
             if char.isspace():
-                # Tokenize a single space
-                self.tokens.append(("SPACE", " "))
-                # Skip all consecutive spaces
-                while not self.end_of_file():
-                    next_char = self.next_char()
-                    if not next_char.isspace():
-                        self.forward -= 1  # Go back one character if the next one is not a space
-                        break
                 continue  # Move to the next character after handling spaces
 
             if self.state == "START":
