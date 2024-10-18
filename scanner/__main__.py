@@ -76,8 +76,8 @@ if __name__ == "__main__":
         nthFib(12);
         """
 
-    run_scanner(test)
-    exit()
+    #run_scanner(test)
+    #exit()
 
     # Loop through each test case and run the scanner
     for idx, code in enumerate(test_cases):
