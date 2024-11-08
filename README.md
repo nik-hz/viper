@@ -2,13 +2,167 @@
 Angel Cui: lc3542\
 Nikolaus Holzer: nh2677
 
-# For TAs: shell script to set up virtual environment and run full code examples for the scanner
+# Syntactic Analysis
+## For TAs: shell script to set up virtual environment and run full code examples for HW2
+For hw1 grading, please refer to the Tokenizing section.
+1) Make sure you are in the viper directory.
+2) Run ```chmod +x parser.sh``` to ensure executable access to the shell script.
+3) Run ```source ./parser.sh```. This will activate a virtual environment called viper and set you up with required dependencies, and run the five code examples and return the outputs.
+For grading please run `python parser` which will execute the `__main__.py` file in the scanner dir if ```source ./parser.sh``` fails. 
+
+## Context Free Grammar for Viper AST
+```code
+Viper -> StatementList
+
+StatementList -> Statement StatementList | ε
+
+Statement -> TypeDeclaration Statement' | ExpressionStatement
+
+Statement' -> <VAR> <ASSIGN> Expression <SEMICOLON> // VariableDeclaration 
+	| <DEF> <FUNC> <LPAREN> ParameterList <RPAREN> FunctionBody // FunctionDefinition
+
+TypeDeclaration -> <TYPE> <TYPE_DEC>
+
+ParameterList -> Parameter ParameterListRest | ε
+
+ParameterListRest -> <PYTHON_CODE, ,> Parameter ParameterListRest | ε
+
+Parameter -> TypeDeclaration <VAR>
+
+FunctionBody -> <LBRACE> StatementList ReturnStatement <RBRACE>
+
+ReturnStatement -> <PYTHON_CODE, return> ExpressionStatement <SEMICOLON> | ε
+
+ExpressionStatement -> Expression <SEMICOLON> | Expression
+
+Expression -> <PYTHON_CODE> | <VAR> | Python Range | FunctionCall | ArithmeticExpression | Loop
+
+Range -> <LPAREN> Python Var Python Var Range <RPAREN> | <LPAREN> Python Var Python Var Range <RPAREN> <SEMICOLON> | ε
+
+Python -> <PYTHON_CODE> Python | ε
+
+Var -> <VAR> Var | ε
+
+ArithmeticExpression -> Expression <OP> Expression
+
+FunctionCall -> <FUNC> <LPAREN> ArgumentList <RPAREN>
+
+ArgumentList -> Expression ArgumentListRest | ε
+
+ArgumentListRest -> <PYTHON_CODE, ,> Expression ArgumentListRest | ε
+
+Loop -> <PYTHON_CODE, for> <PYTHON_CODE> <PYTHON_CODE, in> Python <LBRACE> StatementList <RBRACE>
+```
+
+## Parsing Examples
+
+We show examples that illustrate how parsed viper code looks like.
+We only include the short examples below, when you run our scanner as instructed above, you would be able to see the full list of input and output (same as expected output).
+
+```Code:
+
+Running test case 1:
+Code:
+ int :: x_a = 10; list :: y = range(0,x_a); for i in y: { print(i); };
+
+Tokens:
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, x_a>, <ASSIGN, =>, <PYTHON_CODE, 10>,
+<SEMICOLON, ;>, <TYPE, list>, <TYPE_DEC, ::>, <VAR, y>, <ASSIGN, =>, 
+<TYPE, range>, <LPAREN, (>, <PYTHON_CODE, 0>, <PYTHON_CODE, ,>, <VAR, x_a>,
+<RPAREN, )>, <SEMICOLON, ;>, <PYTHON_CODE, for>, <PYTHON_CODE, i>, 
+<PYTHON_CODE, in>, <PYTHON_CODE, y:>, <LBRACE, {>, <PYTHON_CODE, print>, 
+<LPAREN, (>, <PYTHON_CODE, i>, <RPAREN, )>, <SEMICOLON, ;>, <RBRACE, }>, <SEMICOLON, ;>
+
+AST:
+- VariableDeclaration
+   - TypeDeclaration
+      - <TYPE, int> <TYPE_DEC, ::>
+   - Statement'
+      - <VAR, x_a> <ASSIGN, => <PYTHON_CODE, 10> <SEMICOLON, ;>
+- VariableDeclaration
+   - TypeDeclaration
+      - <TYPE, list> <TYPE_DEC, ::>
+   - Statement'
+      - <VAR, y> <ASSIGN, => <TYPE, range> <LPAREN, (> <PYTHON_CODE, 0> <PYTHON_CODE, ,> <VAR, x_a> <RPAREN, )> <SEMICOLON, ;>
+- ExpressionStatement
+   - Expression
+         - Loop
+            - <PYTHON_CODE, for> <PYTHON_CODE, i> <PYTHON_CODE, in> <PYTHON_CODE, y:> <LBRACE, {> <PYTHON_CODE, print> <LPAREN, (> <PYTHON_CODE, i> <RPAREN, )> <SEMICOLON, ;> <RBRACE, }>
+   - <SIMILON, ;>
+
+----------------------------------------
+
+Running test case 2: (Error catched in parsing: python_code type_dec is not valid)
+Code:
+ str :: def say_hello_world(){ string :: text = 'hello world'; print(text);};
+
+Tokens:
+<TYPE, str>, <TYPE_DEC, ::>, <DEF, def>, <FUNC, say_hello_world>, <LPAREN, (>,
+<RPAREN, )>, <LBRACE, {>, <PYTHON_CODE, string>, <TYPE_DEC, ::>, <VAR, text>,
+<ASSIGN, =>, <PYTHON_CODE, 'hello>, <PYTHON_CODE, world'>, <SEMICOLON, ;>,
+<PYTHON_CODE, print>, <LPAREN, (>, <VAR, text>, <RPAREN, )>, <SEMICOLON, ;>,
+<RBRACE, }>, <SEMICOLON, ;>
+
+AST:
+- VariableDeclaration
+   - TypeDeclaration
+      - <TYPE, str> <TYPE_DEC, ::>
+   - Statement'
+      - <DEF, def> <FUNC, say_hello_world> <LPAREN, (> <RPAREN, )> <LBRACE, {> <PYTHON_CODE, string>ERROR (Here there should be an error)
+
+
+----------------------------------------
+
+Running test case 3:
+Code:
+ int :: def func(int :: a, int :: b):{ int :: c = a + b; return c;}
+
+Tokens:
+<TYPE, int>, <TYPE_DEC, ::>, <DEF, def>, <FUNC, func>, <LPAREN, (>,
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, a>, <PYTHON_CODE, ,>, <TYPE, int>,
+<TYPE_DEC, ::>, <VAR, b>, <RPAREN, )>, <PYTHON_CODE, :>, <LBRACE, {>,
+<TYPE, int>, <TYPE_DEC, ::>, <VAR, c>, <ASSIGN, =>, <VAR, a>,
+<OP, +>, <VAR, b>, <SEMICOLON, ;>, <PYTHON_CODE, return>, <VAR, c>,
+<SEMICOLON, ;>, <RBRACE, }>
+
+AST:
+- VariableDeclaration
+   - TypeDeclaration
+      - <TYPE, int> <TYPE_DEC, ::>
+   - Statement'
+      - <DEF, def> <FUNC, func> <LPAREN, (> 
+      - ParameterList
+         - <TYPE, int> <TYPE_DEC, ::> <VAR, a> <PYTHON_CODE, ,> <TYPE, int> <TYPE_DEC, ::> <VAR, b> 
+      - <RPAREN, )> 
+      - FunctionBody
+         - <LBRACE, {> 
+         - StatementList
+            - TypeDeclaration
+               - <TYPE, int> <TYPE_DEC, ::>
+            - Statement'
+               - <VAR, c> <ASSIGN, =>
+               - ExpressionStatement
+                  - ArithmeticExpression
+                   - <VAR, a> <OP, +> <VAR, b>
+                  - <SEMICOLON, ;>
+         - ReturnStatement
+            - <PYTHON_CODE, return> 
+            - ExpressionStatement
+               - Expression
+                  - <VAR, c>
+            - <SEMICOLON>
+         - <RBRACE, }>
+
+----------------------------------------
+```
+
+# Tokenizing
+## For TAs: shell script to set up virtual environment and run full code examples for HW1
 1) Make sure you are in the viper directory.
 2) Run ```chmod +x scanner.sh``` to ensure executable access to the shell script.
 3) Run ```source ./scanner.sh```. This will activate a virtual environment called viper and set you up with required dependencies, and run the five code examples and return the outputs.
-
-# Tokenizing
 For grading please run `python scanner` which will execute the `__main__.py` file in the scanner dir if ```source ./scanner.sh``` fails. 
+
 For grading please refer to lexical_dfa.jpg for the dfa for the scanner.
 
 This will run 5 examples shown below and parse them. 
