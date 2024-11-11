@@ -1,8 +1,20 @@
+class ParserError(Exception):
+    def __init__(self, message, position, token):
+        super().__init__(message)
+        self.position = position
+        self.token = token
+
+    def __str__(self):
+        return f"ParserError: {self.args[0]} at position {self.position} with token {self.token}"
+
+
 class Parser:
-    def __init__(self, input_string):
+    def __init__(self, input_string, dbg=True):
         self.tokens = input_string
         self.position = 0
         self.in_loop = False
+        self.dbg = dbg
+        self.err = []
 
     def current_token(self):
         # Return the current token or None if at the end of the input
@@ -13,7 +25,8 @@ class Parser:
     def match(self, expected_token):
         # Match the current token if it equals the expected token
         if self.current_token() and self.current_token()[0] == expected_token:
-            print(self.current_token()[0])
+            if self.dbg:
+                print(self.current_token())
             matched_token = self.current_token()
             self.position += 1
             return matched_token
@@ -26,7 +39,12 @@ class Parser:
             print("Parse successful!")
             return parse_tree
         else:
-            print("Parse failed.")
+            print("Parse failed. Generating error trace...")
+            if self.err:
+                for error in self.err[1:]:
+                    print(error)  # Print error details before raising
+                print("\n")
+                raise self.err[0]
             return None
 
     # Viper -> StatementList
@@ -85,7 +103,8 @@ class Parser:
         if (type_tok := self.match("TYPE")) and (type_dec := self.match("TYPE_DEC")):
             return ("TypeDeclaration", type_tok, type_dec)
         self.position = pos
-        return None
+        self.err.append(ParserError(f"Expected a TYPE but found {type_tok}", self.position, type_tok))
+        return None  # don't return none just error out?
 
     # ParameterList -> Parameter ParameterListRest | #
     def parse_parameter_list(self):
@@ -327,133 +346,77 @@ if __name__ == "__main__":
         "<SEMICOLON, ;>",
     ]
 
-    sample_input_string = [
-        ("TYPE", "<TYPE, int>"),
-        ("TYPE_DEC", "<TYPE_DEC, ::>"),
-        ("VAR", "<VAR, x_a>"),
-        ("ASSIGN", "<ASSIGN, =>"),
-        ("PYTHON_CODE", "<PYTHON_CODE, 10>"),
-        ("SEMICOLON", "<SEMICOLON, ;>"),
+    tokens2 = [
+        "<TYPE, str>",
+        "<TYPE_DEC, ::>",
+        "<DEF, def>",
+        "<FUNC, say_hello_world>",
+        "<LPAREN, (>",
+        "<RPAREN, )>",
+        "<LBRACE, {>",
+        "<PYTHON_CODE, string>",
+        "<TYPE_DEC, ::>",
+        "<VAR, text>",
+        "<ASSIGN, =>",
+        "<PYTHON_CODE, 'hello>",
+        "<PYTHON_CODE, world'>",
+        "<SEMICOLON, ;>",
+        "<PYTHON_CODE, print>",
+        "<LPAREN, (>",
+        "<VAR, text>",
+        "<RPAREN, )>",
+        "<SEMICOLON, ;>",
+        "<RBRACE, }>",
+        "<SEMICOLON, ;>",
     ]
-    sample_input_string_2 = convert_tokens(tokens)
+
+    tokens3 = [
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<DEF, def>",
+        "<FUNC, func>",
+        "<LPAREN, (>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, a>",
+        "<PYTHON_CODE, ,>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, b>",
+        "<RPAREN, )>",
+        "<PYTHON_CODE, :>",
+        "<LBRACE, {>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, c>",
+        "<ASSIGN, =>>",
+        "<VAR, a>",
+        "<OP, +>",
+        "<VAR, b>",
+        "<SEMICOLON, ;>",
+        "<PYTHON_CODE, return>",
+        "<VAR, c>",
+        "<SEMICOLON, ;>",
+        "<RBRACE, }>",
+    ]
+    sample_input_string = convert_tokens(tokens)
+    sample_input_string_2 = convert_tokens(tokens2)
+    sample_input_string_3 = convert_tokens(tokens3)
     # parser = Parser(sample_input_string)
     # parse_tree = parser.parse()
     # print(parse_tree)
 
-    parser = Parser(sample_input_string_2)
+    print("\n######################## PARSING EXAMPLE 1 ########################\n")
+    parser = Parser(sample_input_string, dbg=False)
     parse_tree = parser.parse()
     print(parse_tree)
 
-    tree1 = (
-        "Viper",
-        (
-            "StatementList",
-            [
-                (
-                    "Statement",
-                    ("TypeDeclaration", ("TYPE", "<TYPE, int>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
-                    (
-                        "StatementPrime",
-                        ("VAR", "<VAR, x_a>"),
-                        ("ASSIGN", "<ASSIGN, =>"),
-                        (
-                            "Expression",
-                            ("SimpleExpression", ("PYTHON_CODE", "<PYTHON_CODE, 10>")),
-                            ("ExpressionPrime", None),
-                        ),
-                    ),
-                ),
-                (
-                    "Statement",
-                    ("TypeDeclaration", ("TYPE", "<TYPE, list>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
-                    (
-                        "StatementPrime",
-                        ("VAR", "<VAR, y>"),
-                        ("ASSIGN", "<ASSIGN, =>"),
-                        (
-                            "Expression",
-                            (
-                                "SimpleExpression",
-                                (
-                                    ("TYPE", "<TYPE, range>"),
-                                    ("LPAREN", "<LPAREN, (>"),
-                                    [
-                                        ("Python", ("PYTHON_CODE", "<PYTHON_CODE, 0>")),
-                                        ("Python", ("PYTHON_CODE", "<PYTHON_CODE, ,>")),
-                                    ],
-                                    [("Var", ("VAR", "<VAR, x_a>"))],
-                                    None,
-                                    None,
-                                    None,
-                                    ("RPAREN", "<RPAREN, )>"),
-                                ),
-                            ),
-                            ("ExpressionPrime", None),
-                        ),
-                    ),
-                ),
-                (
-                    "Statement",
-                    (
-                        "ExpressionStatement",
-                        (
-                            "Expression",
-                            (
-                                "SimpleExpression",
-                                (
-                                    "Loop",
-                                    ("PYTHON_CODE", "<PYTHON_CODE, for>"),
-                                    [
-                                        ("Python", ("PYTHON_CODE", "<PYTHON_CODE, i>")),
-                                        ("Python", ("PYTHON_CODE", "<PYTHON_CODE, in>")),
-                                        ("Python", ("PYTHON_CODE", "<PYTHON_CODE, y:>")),
-                                    ],
-                                    (
-                                        "StatementList",
-                                        [
-                                            (
-                                                "Statement",
-                                                (
-                                                    "ExpressionStatement",
-                                                    (
-                                                        "Expression",
-                                                        ("SimpleExpression", ("PYTHON_CODE", "<PYTHON_CODE, print>")),
-                                                        ("ExpressionPrime", None),
-                                                    ),
-                                                ),
-                                            ),
-                                            (
-                                                "Statement",
-                                                (
-                                                    "ExpressionStatement",
-                                                    (
-                                                        "Expression",
-                                                        (
-                                                            "SimpleExpression",
-                                                            (
-                                                                "ParenthesizedExpression",
-                                                                (
-                                                                    "Expression",
-                                                                    (
-                                                                        "SimpleExpression",
-                                                                        ("PYTHON_CODE", "<PYTHON_CODE, i>"),
-                                                                    ),
-                                                                    ("ExpressionPrime", None),
-                                                                ),
-                                                            ),
-                                                        ),
-                                                        ("ExpressionPrime", None),
-                                                    ),
-                                                ),
-                                            ),
-                                        ],
-                                    ),
-                                ),
-                            ),
-                            ("ExpressionPrime", None),
-                        ),
-                    ),
-                ),
-            ],
-        ),
-    )
+    # print("\n######################## PARSING EXAMPLE 2 ########################\n")
+    # parser = Parser(sample_input_string_2, dbg=False)
+    # parse_tree = parser.parse()
+    # print(parse_tree)
+
+    print("\n######################## PARSING EXAMPLE 3 ########################\n")
+    parser = Parser(sample_input_string_3)
+    parse_tree = parser.parse()
+    print(parse_tree)
