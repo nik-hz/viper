@@ -10,7 +10,7 @@ class ParserError(Exception):
 
 
 class Parser:
-    def __init__(self, input_string, dbg=True):
+    def __init__(self, input_string, dbg):
         self.tokens = input_string
         self.position = 0
         self.in_loop = False
@@ -39,7 +39,7 @@ class Parser:
         # Start parsing from the root rule
         parse_tree = self.parse_viper()
         if parse_tree and self.position == len(self.tokens):
-            print("Parse successful!")
+            print("\nParse successful!")
             return parse_tree
         else:
             print("Parse failed...")
@@ -459,6 +459,7 @@ if __name__ == "__main__":
         "<FUNC, say_hello_world>",
         "<LPAREN, (>",
         "<RPAREN, )>",
+        "<PYTHON_CODE, :>",
         "<LBRACE, {>",
         "<PYTHON_CODE, string>",
         "<TYPE_DEC, ::>",
@@ -504,6 +505,7 @@ if __name__ == "__main__":
         "<VAR, c>",
         "<SEMICOLON, ;>",
         "<RBRACE, }>",
+        "<SEMICOLON, ;>",
     ]
 
     tokens4 = [
