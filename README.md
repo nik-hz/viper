@@ -49,7 +49,7 @@ Var -> <VAR> Var | ε
 
 ArithmeticExpression -> Expression <OP> Expression
 
-FunctionCall -> <FUNC> <LPAREN> ArgumentList <RPAREN>
+FunctionCall -> <FUNC> <LPAREN> ArgumentList <RPAREN> <SEMICOLON>
 
 ArgumentList -> Expression ArgumentListRest | ε
 
