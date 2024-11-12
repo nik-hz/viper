@@ -68,7 +68,7 @@ Loop -> <PYTHON_CODE, for> <PYTHON_CODE> <PYTHON_CODE, in> Python <LBRACE> State
 ## Parsing Examples
 
 We show examples that illustrate how parsed viper code looks like.
-The 5 examples and their expected output after running our pipeline can be found in ```hw2_expected.txt```, when you run our scanner as instructed above, you would be able to see the full list of input and output (same as expected outputs in ```hw2_expected.txt```).
+The 5 examples and their expected output after running our pipeline can be found in ```hw2_expected.txt```, when you run our scanner as instructed above, you would be able to see the full list of input and output (same as expected outputs in ```hw2_expected.txt```). Assertions in the ```run_viper.py``` pipeline make sure that the outputs from the pipeline match the expected ones.
 
 # Tokenizing
 ## For TAs: shell script to set up virtual environment and run full code examples for HW1
