@@ -60,7 +60,7 @@ Loop -> <PYTHON_CODE, for> <PYTHON_CODE> <PYTHON_CODE, in> Python <LBRACE> State
 ```
 
 ### Terminals
-`<TYPE>`, `<TYPE_DEC>`, `<VAR>`, `<ASSIGN>`, `<SEMICOLON>`, `<DEF>`, `<FUNC>`, `<LPAREN>`, `<RPAREN>`, `<PYTHON_CODE, :>`, `<LBRACE>`, `<RBRACE>`, `<PYTHON_CODE, return>`, `<PYTHON_CODE>`, `<PYTHON_CODE, ,>`, `<OP>`, `<PYTHON_CODE, for>`, `<PYTHON_CODE, in>`
+`<TYPE>`, `<TYPE_DEC>`, `<VAR>`, `<ASSIGN>`, `<SEMICOLON>`, `<DEF>`, `<FUNC>`, `<LPAREN>`, `<RPAREN>`, `<PYTHON_CODE, :>`, `<LBRACE>`, `<RBRACE>`, `<PYTHON_CODE, return>`, `<PYTHON_CODE>`, `<PYTHON_CODE, ,>`, `<OP>`, `<PYTHON_CODE, for>`, `<PYTHON_CODE, in>`, `epsilon`
 
 ### Non-terminals
 `Viper`, `StatementList`, `Statement`, `Statement'`, `TypeDeclaration`, `ParameterList`, `ParameterListRest`, `Parameter`, `FunctionBody`, `ReturnStatement`, `ExpressionStatement`, `Expression`, `ExpressionPrime`, `SimpleExpression`, `Range`, `Python`, `Var`, `ArithmeticExpression`, `FunctionCall`, `ArgumentList`, `ArgumentListRest`, `Loop`
@@ -68,7 +68,7 @@ Loop -> <PYTHON_CODE, for> <PYTHON_CODE> <PYTHON_CODE, in> Python <LBRACE> State
 ## Parsing Examples
 
 We show examples that illustrate how parsed viper code looks like.
-The 5 examples and their expected output after running our pipeline can be found as hw2_expected.txt, when you run our scanner as instructed above, you would be able to see the full list of input and output (same as expected outputs in hw2_expected.txt).
+The 5 examples and their expected output after running our pipeline can be found in ```hw2_expected.txt```, when you run our scanner as instructed above, you would be able to see the full list of input and output (same as expected outputs in ```hw2_expected.txt```).
 
 # Tokenizing
 ## For TAs: shell script to set up virtual environment and run full code examples for HW1
