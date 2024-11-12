@@ -11,6 +11,10 @@ For hw2 grading, please refer to the Syntactic Analysis section.
 
 Please run `python run_viper.py` if ```source ./parser.sh``` fails. 
 
+Demo videos are divided into two videos, one going over the parser code and viper parser (Part 1), one going over the viper pipeline and examples programs (Part 2). Videos are uploaded to the Google Drive and can be accessed through this link through Lion Mail (need to log in to your Columbia Google Account): https://drive.google.com/drive/folders/1Dgx0PggO9zZVhKScSzEIXWRdzvQyOG7i?usp=sharing
+
+If you have issues accessing the videos (e.x. using Barnard email) please request access and we will grant access ASAP.
+
 ## Context Free Grammar for Viper AST
 ```code
 Viper -> StatementList
