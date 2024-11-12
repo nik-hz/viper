@@ -30,7 +30,7 @@ class Scanner:
             "VAR",
             "PYTHON_CODE",
             "FUNC",
-            "OP"
+            "OP",
         }
 
         # Updated list of reserved type tokens
@@ -54,7 +54,7 @@ class Scanner:
         ]
 
         # Updated list of reserved single-character tokens
-        self.single_char_tokens = [";", "{", "}", "(", ")",",", "="]
+        self.single_char_tokens = [";", "{", "}", "(", ")", ",", "="]
 
         # operators, not necessaroly single tokens
         self.operators = ["**", "*", "+", "-", "//", "/", "%"]
@@ -222,7 +222,7 @@ class Scanner:
         self.expect_func = False
         self.expect_var = False
 
-    def scan_token(self) -> list:
+    def scan_tokens(self) -> list:
         """
         Scans the input code for specific tokens using finite automata transitions.
         Handles tokens, including collapsing multiple spaces into a single space token.
@@ -285,7 +285,9 @@ class Scanner:
                     elif lexeme == "def":  # If it's "def", handle it as DEF
                         self.tokens.append(("DEF", lexeme))
                         self.expect_func = True
-                    elif self.expect_func:  # if previous token was def then expect func, FUNC takes precedence than VAR
+                    elif (
+                        self.expect_func
+                    ):  # if previous token was def then expect func, FUNC takes precedence than VAR
                         self.handle_func_token(lexeme)
                     elif self.expect_var:  # If previous token was :: then expect var
                         self.handle_variable(lexeme)
