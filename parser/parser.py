@@ -13,6 +13,7 @@ class Parser:
         self.tokens = input_string
         self.position = 0
         self.in_loop = False
+        self.at_return = False
         self.dbg = dbg
         self.err = []
 
@@ -85,15 +86,15 @@ class Parser:
         pos = self.position
         if (varname := self.match("VAR")) and (ass := self.match("ASSIGN")):
             expr = self.parse_expression()
-            if expr is not None and self.match("SEMICOLON"):
-                return ("StatementPrime", varname, ass, expr)
+            if expr is not None and (semi := self.match("SEMICOLON")):
+                return ("StatementPrime", varname, ass, expr, semi)
             self.position = pos
-        elif self.match("DEF") and self.match("FUNC") and self.match("LPAREN"):
+        elif (fdef := self.match("DEF")) and (func := self.match("FUNC")) and (lpar := self.match("LPAREN")):
             params = self.parse_parameter_list()
-            if self.match("RPAREN"):
+            if (rpar := self.match("RPAREN")) and (colon := self.match("PYTHON_CODE")) and ":" in colon[1]:
                 func_body = self.parse_function_body()
                 if func_body is not None:
-                    return ("StatementPrime", "DEF_FUNC", params, func_body)
+                    return ("StatementPrime", fdef, func, lpar, params, rpar, colon, func_body)
             self.position = pos
         return None
 
@@ -118,7 +119,7 @@ class Parser:
     # ParameterListRest -> COMMA Parameter ParameterListRest | #
     def parse_parameter_list_rest(self):
         params = []
-        while self.match("COMMA"):
+        while (comma := self.match("PYTHON_CODE")) and "," in comma[1]:
             param = self.parse_parameter()
             if param is not None:
                 params.append(param)
@@ -136,30 +137,30 @@ class Parser:
     # FunctionBody -> LBRACE StatementList ReturnStatement RBRACE
     def parse_function_body(self):
         pos = self.position
-        if self.match("LBRACE"):
-            stmt_list = self.parse_statement_list()
+        if lbrace := self.match("LBRACE"):
+            stmt_list = self.parse_statement_list()  # TODO make sure return doesn't get caught here
             ret_stmt = self.parse_return_statement()
-            if ret_stmt is not None and self.match("RBRACE"):
-                return ("FunctionBody", stmt_list, ret_stmt)
+            if ret_stmt is not None and (rbrace := self.match("RBRACE")):
+                return ("FunctionBody", lbrace, stmt_list, ret_stmt, rbrace)
             self.position = pos
         return None
 
     # ReturnStatement -> RETURN ExpressionStatement SEMICOLON | #
     def parse_return_statement(self):
         pos = self.position
-        if self.match("RETURN"):
+        if (ret := self.match("PYTHON_CODE")) and "return" in ret[1]:
             expr_stmt = self.parse_expression_statement()
-            if expr_stmt is not None and self.match("SEMICOLON"):
-                return ("ReturnStatement", expr_stmt)
+            if expr_stmt is not None:  # and (semi := self.match("SEMICOLON")):
+                return ("ReturnStatement", ret, expr_stmt)
             self.position = pos
         return ("ReturnStatement", None)  # Epsilon rule allows an empty ReturnStatement
 
     # ExpressionStatement -> Expression SEMICOLON handle case when loop and no semicolon needed
     def parse_expression_statement(self):
         expr = self.parse_expression()
-        if expr is not None and self.match("SEMICOLON") or expr is not None and self.in_loop:
+        if expr is not None and (semi := self.match("SEMICOLON")) or expr is not None and self.in_loop:
             self.in_loop = False
-            return ("ExpressionStatement", expr)
+            return ("ExpressionStatement", expr, semi)
         return None
 
     # Expression -> SimpleExpression ExpressionPrime
@@ -188,8 +189,10 @@ class Parser:
         if loop := self.parse_loop():
             return ("SimpleExpression", loop)
         elif code := self.match("PYTHON_CODE"):
-            # need to check for loop TODO may need to manually insert the for token
-            return ("SimpleExpression", code)
+            if "return" in code[1]:
+                self.at_return = True
+            else:
+                return ("SimpleExpression", code)
         elif var := self.match("VAR"):
             return ("SimpleExpression", "VAR", var)
         elif func_call := self.parse_function_call():
@@ -216,7 +219,7 @@ class Parser:
         pos = self.position
         if self.match("FUNC") and self.match("LPAREN"):
             args = self.parse_argument_list()
-            if self.match("RPAREN"):
+            if self.match("RPAREN"):  # TODO match colon
                 return ("FunctionCall", args)
             self.position = pos
         return None
@@ -406,11 +409,12 @@ if __name__ == "__main__":
     # parse_tree = parser.parse()
     # print(parse_tree)
 
-    print("\n######################## PARSING EXAMPLE 1 ########################\n")
-    parser = Parser(sample_input_string, dbg=False)
-    parse_tree = parser.parse()
-    print(parse_tree)
+    # print("\n######################## PARSING EXAMPLE 1 ########################\n")
+    # parser = Parser(sample_input_string, dbg=False)
+    # parse_tree = parser.parse()
+    # print(parse_tree)
 
+    # TODO catch error and continue
     # print("\n######################## PARSING EXAMPLE 2 ########################\n")
     # parser = Parser(sample_input_string_2, dbg=False)
     # parse_tree = parser.parse()
@@ -420,3 +424,86 @@ if __name__ == "__main__":
     parser = Parser(sample_input_string_3)
     parse_tree = parser.parse()
     print(parse_tree)
+
+
+test = (
+    "Viper",
+    (
+        "StatementList",
+        [
+            (
+                "Statement",
+                ("TypeDeclaration", ("TYPE", "<TYPE, int>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
+                (
+                    "StatementPrime",
+                    ("DEF", "<DEF, def>"),
+                    ("FUNC", "<FUNC, func>"),
+                    ("LPAREN", "<LPAREN, (>"),
+                    (
+                        "ParameterList",
+                        [
+                            (
+                                "Parameter",
+                                ("TypeDeclaration", ("TYPE", "<TYPE, int>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
+                                ("VAR", "<VAR, a>"),
+                            ),
+                            (
+                                "Parameter",
+                                ("TypeDeclaration", ("TYPE", "<TYPE, int>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
+                                ("VAR", "<VAR, b>"),
+                            ),
+                        ],
+                    ),
+                    ("RPAREN", "<RPAREN, )>"),
+                    ("PYTHON_CODE", "<PYTHON_CODE, :>"),
+                    (
+                        "FunctionBody",
+                        ("LBRACE", "<LBRACE, {>"),
+                        (
+                            "StatementList",
+                            [
+                                (
+                                    "Statement",
+                                    ("TypeDeclaration", ("TYPE", "<TYPE, int>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
+                                    (
+                                        "StatementPrime",
+                                        ("VAR", "<VAR, c>"),
+                                        ("ASSIGN", "<ASSIGN, =>"),
+                                        (
+                                            "Expression",
+                                            ("SimpleExpression", "VAR", ("VAR", "<VAR, a>")),
+                                            (
+                                                "ExpressionPrime",
+                                                [
+                                                    (
+                                                        ("OP", "<OP, +>"),
+                                                        ("SimpleExpression", "VAR", ("VAR", "<VAR, b>")),
+                                                    )
+                                                ],
+                                            ),
+                                        ),
+                                        ("SEMICOLON", "<SEMICOLON, ;>"),
+                                    ),
+                                )
+                            ],
+                        ),
+                        (
+                            "ReturnStatement",
+                            ("PYTHON_CODE", "<PYTHON_CODE, return>"),
+                            (
+                                "ExpressionStatement",
+                                (
+                                    "Expression",
+                                    ("SimpleExpression", "VAR", ("VAR", "<VAR, c>")),
+                                    ("ExpressionPrime", None),
+                                ),
+                                ("SEMICOLON", "<SEMICOLON, ;>"),
+                            ),
+                        ),
+                        ("RBRACE", "<RBRACE, }>"),
+                    ),
+                ),
+            )
+        ],
+    ),
+)
