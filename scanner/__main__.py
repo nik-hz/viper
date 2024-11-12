@@ -1,4 +1,4 @@
-from scanner import Scanner
+from scanner.scanner import Scanner
 
 
 def print_list(tokens):
@@ -19,7 +19,7 @@ def print_tokens(tokens):
 def run_scanner(code):
     scanner = Scanner()
     scanner.read_code(code)
-    tokens = scanner.scan_token()  # Retrieve tokens
+    tokens = scanner.scan_tokens()  # Retrieve tokens
     print_tokens(tokens)  # This prints the tokens in the format asked <Token Type, Token Value>
 
 

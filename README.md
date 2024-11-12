@@ -39,7 +39,7 @@ Expression -> SimpleExpression ExpressionPrime
 
 ExpressionPrime -> SimpleExpression ExpressionPrime | ε
 
-SimpleExpression -> PYTHON_CODE | VAR | FunctionCall | Loop | ParenthesizedExpression | Range
+SimpleExpression -> PYTHON_CODE | VAR | FunctionCall | Loop | ParenthesizedExpression | Range | OP
 
 Range -> <LPAREN> Python Var Python Var Range <RPAREN> | <LPAREN> Python Var Python Var Range <RPAREN> <SEMICOLON> | ε
 
