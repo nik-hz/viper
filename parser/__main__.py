@@ -1,5 +1,6 @@
-from parser.parser import Parser, convert_tokens
-from scanner.scanner import Scanner
+from parser import Parser, convert_tokens
+
+# from scanner import Scanner
 
 if __name__ == "__main__":
     tokens = [
@@ -110,6 +111,36 @@ if __name__ == "__main__":
         "<PYTHON_CODE, 10>;",
     ]
 
+    tokens = [
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<DEF, def>",
+        "<FUNC, func>",
+        "<LPAREN, (>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, a>",
+        "<PYTHON_CODE, ,>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, b>",
+        "<RPAREN, )>",
+        "<PYTHON_CODE, :>",
+        "<LBRACE, {>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, c>",
+        "<ASSIGN, =>",
+        "<VAR, a>",
+        "<OP, +>",
+        "<VAR, b>",
+        "<SEMICOLON, ;>",
+        "<PYTHON_CODE, return>",
+        "<VAR, c>",
+        "<SEMICOLON, ;>",
+        "<RBRACE, }>",
+        "<SEMICOLON, ;>",
+    ]
     sample_input_string = convert_tokens(tokens)
     sample_input_string_2 = convert_tokens(tokens2)
     sample_input_string_3 = convert_tokens(tokens3)
@@ -117,27 +148,27 @@ if __name__ == "__main__":
     sample_input_string_5 = convert_tokens(tokens5)
 
     print("\n######################## PARSING EXAMPLE 1 ########################\n")
-    parser = Parser(sample_input_string, dbg=False)
+    parser = Parser(sample_input_string, dbg=True)
     parse_tree = parser.parse()
     print(parse_tree)
 
-    # TODO catch error and continue
-    print("\n######################## PARSING EXAMPLE 2 ########################\n")
-    parser = Parser(sample_input_string_2, dbg=False)
-    parse_tree = parser.parse()
-    print(parse_tree)
+    # # TODO catch error and continue
+    # print("\n######################## PARSING EXAMPLE 2 ########################\n")
+    # parser = Parser(sample_input_string_2, dbg=False)
+    # parse_tree = parser.parse()
+    # print(parse_tree)
 
-    print("\n######################## PARSING EXAMPLE 3 ########################\n")
-    parser = Parser(sample_input_string_3, dbg=False)
-    parse_tree = parser.parse()
-    print(parse_tree)
+    # print("\n######################## PARSING EXAMPLE 3 ########################\n")
+    # parser = Parser(sample_input_string_3, dbg=False)
+    # parse_tree = parser.parse()
+    # print(parse_tree)
 
-    print("\n######################## PARSING EXAMPLE 4 ########################\n")
-    parser = Parser(sample_input_string_4, dbg=False)
-    parse_tree = parser.parse()
-    print(parse_tree)
+    # print("\n######################## PARSING EXAMPLE 4 ########################\n")
+    # parser = Parser(sample_input_string_4, dbg=False)
+    # parse_tree = parser.parse()
+    # print(parse_tree)
 
-    print("\n######################## PARSING EXAMPLE 5 ########################\n")
-    parser = Parser(sample_input_string_5, dbg=False)
-    parse_tree = parser.parse()
-    print(parse_tree)
+    # print("\n######################## PARSING EXAMPLE 5 ########################\n")
+    # parser = Parser(sample_input_string_5, dbg=False)
+    # parse_tree = parser.parse()
+    # print(parse_tree)

@@ -13,6 +13,7 @@ if parser_path not in sys.path:
 from scanner import Scanner
 from parser import Parser
 
+
 class Pipeline:
     def __init__(self, dbg=False):
         self.dbg = dbg
@@ -21,7 +22,7 @@ class Pipeline:
         """Tokenize the input code using the scanner."""
         scanner = Scanner()
         scanner.read_code(code)
-        tokens = scanner.scan_token()
+        tokens = scanner.scan_tokens()
         return tokens
 
     def print_tokens(self, tokens):
@@ -38,7 +39,7 @@ class Pipeline:
     def run(self, code, expected_tokens=None, expected_ast=None):
         """Run the pipeline: tokenize, optionally assert tokens, and parse."""
         tokens = self.tokenize(code)
-        
+
         print("\nTokens:")
         self.print_tokens(tokens)
 
@@ -64,9 +65,10 @@ class Pipeline:
                 print(f"Got:      {ast}")
 
         return ast
-    
+
     def visualize_ast(self, ast, level=0, is_last=True):
         """Visualize AST as a tree structure matching the requested format."""
+
         def prefix(level, is_last):
             """Create tree branch prefixes."""
             if level == 0:
@@ -76,28 +78,21 @@ class Pipeline:
         if isinstance(ast, tuple):
             print(prefix(level, is_last) + str(ast[0]))  # Print the current node
             for i, child in enumerate(ast[1:]):
-                self.visualize_ast(
-                    child,
-                    level + 1,
-                    is_last=(i == len(ast[1:]) - 1)
-                )
+                self.visualize_ast(child, level + 1, is_last=(i == len(ast[1:]) - 1))
         elif isinstance(ast, list):
             for i, item in enumerate(ast):
-                self.visualize_ast(
-                    item,
-                    level,
-                    is_last=(i == len(ast) - 1)
-                )
+                self.visualize_ast(item, level, is_last=(i == len(ast) - 1))
         else:
             # Leaf node
             print(prefix(level, is_last) + str(ast))
+
 
 def run_example(pipeline, input_code, expected_tokens=None, expected_ast=None, example_num=1):
     """Run a single example and display the results."""
     print(f"\n######################## VIPER EXAMPLE {example_num} ########################\n")
     print("Input code:")
     print(input_code)
-    
+
     ast = pipeline.run(input_code, expected_tokens, expected_ast)
 
     print("\nFinal AST:")
@@ -105,6 +100,7 @@ def run_example(pipeline, input_code, expected_tokens=None, expected_ast=None, e
 
     print("\nAST Tree:")
     pipeline.visualize_ast(ast)
+
 
 if __name__ == "__main__":
     pipeline = Pipeline(dbg=False)
@@ -148,7 +144,7 @@ if __name__ == "__main__":
                 "<RPAREN, )>",
                 "<SEMICOLON, ;>",
                 "<RBRACE, }>",
-                "<SEMICOLON, ;>"
+                "<SEMICOLON, ;>",
             ],
             "ast": None,
         },
@@ -159,7 +155,7 @@ if __name__ == "__main__":
                 print(text);
             };
             """,
-            "tokens":[
+            "tokens": [
                 "<TYPE, str>",
                 "<TYPE_DEC, ::>",
                 "<DEF, def>",
@@ -245,12 +241,12 @@ if __name__ == "__main__":
             NoneType :: def nthFib(int :: n):{
                 int :: res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
                 print(res,'is',str(n)+'th fibonacci number');
-            }
+            };
             nthFib(12);
             """,
             "tokens": None,
             "ast": None,  # No assertion for this case
-        }
+        },
     ]
 
     # Run examples

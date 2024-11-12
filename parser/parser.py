@@ -186,10 +186,10 @@ class Parser:
         if lbrace := self.match("LBRACE"):
             stmt_list = self.parse_statement_list()  # TODO make sure return doesn't get caught here
             ret_stmt = self.parse_return_statement()
-            if ret_stmt is not None and (rbrace := self.match("RBRACE")):
+            if ret_stmt is not None and (rbrace := self.match("RBRACE")) and (semi := self.match("SEMICOLON")):
                 self.pop_error_context(True)
-                return ("FunctionBody", lbrace, stmt_list, ret_stmt, rbrace)
-            self.add_error("Expected RBRACE to close FunctionBody")
+                return ("FunctionBody", lbrace, stmt_list, ret_stmt, rbrace, semi)
+            self.add_error("Expected RBRACE and SEMICOLON to close FunctionBody")
         else:
             self.add_error("Expected LBRACE to start FunctionBody")
         self.pop_error_context(False)
