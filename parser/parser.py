@@ -40,12 +40,12 @@ class Parser:
             print("Parse successful!")
             return parse_tree
         else:
-            print("Parse failed. Generating error trace...")
+            # print("Parse failed. Generating error trace...")
             if self.err:
-                for error in self.err[1:]:
+                for error in self.err:
                     print(error)  # Print error details before raising
-                print("\n")
-                raise self.err[0]
+                # print("\n")
+                # raise self.err[0]
             return None
 
     # Viper -> StatementList
@@ -321,13 +321,13 @@ if __name__ == "__main__":
         "<TYPE, int>",
         "<TYPE_DEC, ::>",
         "<VAR, x_a>",
-        "<ASSIGN, =>>",
+        "<ASSIGN, =>",
         "<PYTHON_CODE, 10>",
         "<SEMICOLON, ;>",
         "<TYPE, list>",
         "<TYPE_DEC, ::>",
         "<VAR, y>",
-        "<ASSIGN, =>>",
+        "<ASSIGN, =>",
         "<TYPE, range>",
         "<LPAREN, (>",
         "<PYTHON_CODE, 0>",
@@ -402,108 +402,40 @@ if __name__ == "__main__":
         "<SEMICOLON, ;>",
         "<RBRACE, }>",
     ]
+
+    tokens4 = [
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, x_a>",
+        "<ASSIGN, =>",
+        "<PYTHON_CODE, 10>",
+        "<SEMICOLON, ;>",
+    ]
     sample_input_string = convert_tokens(tokens)
     sample_input_string_2 = convert_tokens(tokens2)
     sample_input_string_3 = convert_tokens(tokens3)
+    sample_input_string_4 = convert_tokens(tokens4)
     # parser = Parser(sample_input_string)
     # parse_tree = parser.parse()
     # print(parse_tree)
 
-    # print("\n######################## PARSING EXAMPLE 1 ########################\n")
-    # parser = Parser(sample_input_string, dbg=False)
-    # parse_tree = parser.parse()
-    # print(parse_tree)
-
-    # TODO catch error and continue
-    # print("\n######################## PARSING EXAMPLE 2 ########################\n")
-    # parser = Parser(sample_input_string_2, dbg=False)
-    # parse_tree = parser.parse()
-    # print(parse_tree)
-
-    print("\n######################## PARSING EXAMPLE 3 ########################\n")
-    parser = Parser(sample_input_string_3)
+    print("\n######################## PARSING EXAMPLE 1 ########################\n")
+    parser = Parser(sample_input_string, dbg=False)
     parse_tree = parser.parse()
     print(parse_tree)
 
+    # TODO catch error and continue
+    print("\n######################## PARSING EXAMPLE 2 ########################\n")
+    parser = Parser(sample_input_string_2, dbg=False)
+    parse_tree = parser.parse()
+    print(parse_tree)
 
-test = (
-    "Viper",
-    (
-        "StatementList",
-        [
-            (
-                "Statement",
-                ("TypeDeclaration", ("TYPE", "<TYPE, int>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
-                (
-                    "StatementPrime",
-                    ("DEF", "<DEF, def>"),
-                    ("FUNC", "<FUNC, func>"),
-                    ("LPAREN", "<LPAREN, (>"),
-                    (
-                        "ParameterList",
-                        [
-                            (
-                                "Parameter",
-                                ("TypeDeclaration", ("TYPE", "<TYPE, int>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
-                                ("VAR", "<VAR, a>"),
-                            ),
-                            (
-                                "Parameter",
-                                ("TypeDeclaration", ("TYPE", "<TYPE, int>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
-                                ("VAR", "<VAR, b>"),
-                            ),
-                        ],
-                    ),
-                    ("RPAREN", "<RPAREN, )>"),
-                    ("PYTHON_CODE", "<PYTHON_CODE, :>"),
-                    (
-                        "FunctionBody",
-                        ("LBRACE", "<LBRACE, {>"),
-                        (
-                            "StatementList",
-                            [
-                                (
-                                    "Statement",
-                                    ("TypeDeclaration", ("TYPE", "<TYPE, int>"), ("TYPE_DEC", "<TYPE_DEC, ::>")),
-                                    (
-                                        "StatementPrime",
-                                        ("VAR", "<VAR, c>"),
-                                        ("ASSIGN", "<ASSIGN, =>"),
-                                        (
-                                            "Expression",
-                                            ("SimpleExpression", "VAR", ("VAR", "<VAR, a>")),
-                                            (
-                                                "ExpressionPrime",
-                                                [
-                                                    (
-                                                        ("OP", "<OP, +>"),
-                                                        ("SimpleExpression", "VAR", ("VAR", "<VAR, b>")),
-                                                    )
-                                                ],
-                                            ),
-                                        ),
-                                        ("SEMICOLON", "<SEMICOLON, ;>"),
-                                    ),
-                                )
-                            ],
-                        ),
-                        (
-                            "ReturnStatement",
-                            ("PYTHON_CODE", "<PYTHON_CODE, return>"),
-                            (
-                                "ExpressionStatement",
-                                (
-                                    "Expression",
-                                    ("SimpleExpression", "VAR", ("VAR", "<VAR, c>")),
-                                    ("ExpressionPrime", None),
-                                ),
-                                ("SEMICOLON", "<SEMICOLON, ;>"),
-                            ),
-                        ),
-                        ("RBRACE", "<RBRACE, }>"),
-                    ),
-                ),
-            )
-        ],
-    ),
-)
+    print("\n######################## PARSING EXAMPLE 3 ########################\n")
+    parser = Parser(sample_input_string_3, dbg=False)
+    parse_tree = parser.parse()
+    print(parse_tree)
+
+    print("\n######################## PARSING EXAMPLE 4 ########################\n")
+    parser = Parser(sample_input_string_4, dbg=False)
+    parse_tree = parser.parse()
+    print(parse_tree)

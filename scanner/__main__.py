@@ -64,6 +64,7 @@ if __name__ == "__main__":
         "int :: 123x_a;",
         "int :: a = 123abc456;",
         "int :: a = @;",
+        "int :: 123 = @;",
     ]
 
     test = """

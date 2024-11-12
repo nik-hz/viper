@@ -19,7 +19,7 @@ StatementList -> Statement StatementList | ε
 Statement -> TypeDeclaration Statement' | ExpressionStatement
 
 Statement' -> <VAR> <ASSIGN> Expression <SEMICOLON> // VariableDeclaration 
-	| <DEF> <FUNC> <LPAREN> ParameterList <RPAREN> FunctionBody // FunctionDefinition
+	| <DEF> <FUNC> <LPAREN> ParameterList <RPAREN> <PYTHON_CODE, :> FunctionBody // FunctionDefinition
 
 TypeDeclaration -> <TYPE> <TYPE_DEC>
 
@@ -35,7 +35,11 @@ ReturnStatement -> <PYTHON_CODE, return> ExpressionStatement <SEMICOLON> | ε
 
 ExpressionStatement -> Expression <SEMICOLON> | Expression
 
-Expression -> <PYTHON_CODE> | <VAR> | Python Range | FunctionCall | ArithmeticExpression | Loop
+Expression -> SimpleExpression ExpressionPrime
+
+ExpressionPrime -> SimpleExpression ExpressionPrime | ε
+
+SimpleExpression -> PYTHON_CODE | VAR | FunctionCall | Loop | ParenthesizedExpression | Range
 
 Range -> <LPAREN> Python Var Python Var Range <RPAREN> | <LPAREN> Python Var Python Var Range <RPAREN> <SEMICOLON> | ε
 
@@ -53,6 +57,7 @@ ArgumentListRest -> <PYTHON_CODE, ,> Expression ArgumentListRest | ε
 
 Loop -> <PYTHON_CODE, for> <PYTHON_CODE> <PYTHON_CODE, in> Python <LBRACE> StatementList <RBRACE>
 ```
+
 
 ## Parsing Examples
 
