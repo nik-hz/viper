@@ -165,61 +165,11 @@ ArgumentListRest -> <PYTHON_CODE, ,> Expression ArgumentListRest | ε
 Loop -> <PYTHON_CODE, for> <PYTHON_CODE> <PYTHON_CODE, in> Python <LBRACE> StatementList <RBRACE>
 ```
 
-<<<<<<< HEAD
-## Error Handling
-Our parser handles syntactic errors. We implement a stack based error handler that creates a new local error context for each recursive call, only propagating the errors from true syntactic errors. In this way, our parser does not throw errors coming from the regular tree search of the recursive parser. Below 
-
-```Python 
-"""Error handling: stack management"""
- def push_error_context(self):
-     # Create a new temporary error context on the stack
-     self.error_context_stack.append([])
-
- def pop_error_context(self, success):
-     # Pop the top error context and commit to main error list if unsuccessful
-     if self.error_context_stack:
-         temp_errors = self.error_context_stack.pop()
-         if not success and temp_errors:
-             self.err.extend(temp_errors)
-
- def add_error(self, message):
-     # token = self.current_token()
-     token = None
-     error = ParserError(message, self.position, token)
-     if self.error_context_stack:
-         self.error_context_stack[-1].append(error)
-     else:
-         self.err.append(error)
-
-"""Error handling: Local error context"""
- def parse_statement(self):
-     pos = self.position
-     self.push_error_context()
-     type_decl = self.parse_type_declaration()
-     if type_decl is not None:
-         stmt_prime = self.parse_statement_prime()
-         if stmt_prime is not None:
-             self.pop_error_context(True)
-             return ("Statement", type_decl, stmt_prime)
-         self.add_error("Expected StatementPrime after TypeDeclaration")
-         self.position = pos
-
-     expr_stmt = self.parse_expression_statement()
-     if expr_stmt is not None:
-         self.pop_error_context(True)
-         return ("Statement", expr_stmt)
-
-     self.pop_error_context(False)
-     self.add_error("Expected a TypeDeclaration or ExpressionStatement")
-     return None
-```
-=======
 ### Terminals
 `<TYPE>`, `<TYPE_DEC>`, `<VAR>`, `<ASSIGN>`, `<SEMICOLON>`, `<DEF>`, `<FUNC>`, `<LPAREN>`, `<RPAREN>`, `<PYTHON_CODE, :>`, `<LBRACE>`, `<RBRACE>`, `<PYTHON_CODE, return>`, `<PYTHON_CODE>`, `<PYTHON_CODE, ,>`, `<OP>`, `<PYTHON_CODE, for>`, `<PYTHON_CODE, in>`, `epsilon`
 
 ### Non-terminals
 `Viper`, `StatementList`, `Statement`, `Statement'`, `TypeDeclaration`, `ParameterList`, `ParameterListRest`, `Parameter`, `FunctionBody`, `ReturnStatement`, `ExpressionStatement`, `Expression`, `ExpressionPrime`, `SimpleExpression`, `Range`, `Python`, `Var`, `ArithmeticExpression`, `FunctionCall`, `ArgumentList`, `ArgumentListRest`, `Loop`
->>>>>>> 6675d223c241e1345edf745f3a4f57ed6de3a045
 
 ## Parsing Examples
 
