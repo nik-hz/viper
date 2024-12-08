@@ -2,6 +2,108 @@
 Angel Cui: lc3542\
 Nikolaus Holzer: nh2677
 
+# Code Generation
+
+# Viper to Python sample pairs
+Our code generator should convert the AST into correct python code. We check for compile time type consistency in the Viper code and then turn it to python. 
+
+### 1) 
+**Viper input**
+``` python 
+NoneType :: def say_hello_world():{ 
+    string :: text = 'hello world'; 
+    print(text);
+    }
+```
+
+**Python output**
+```python 
+def say_hello_world(){
+    text = 'hello world'
+    assert isinstance(text, str)
+    print(text)
+}
+```
+### 2) 
+**Viper input**
+``` python 
+str :: def say_hello_world():{ 
+    string :: text = 'hello world'; 
+    return text;
+    }
+
+output = say_hello_world()
+```
+
+**Python output**
+```python 
+def say_hello_world(){
+    text = 'hello world'
+    assert isinstance(text, str)
+    return text
+}
+
+output = say_hello_world()
+assert isinstance(output, str)
+```
+
+### 3) 
+**Viper input**
+``` python 
+int :: def func(int :: a, int :: b):{ 
+    assert isinstance(a, int)
+    assert isinstance(b, int)
+    int :: c = a + b; 
+    assert isinstance(c, int)
+    return c;
+}
+```
+
+**Python output**
+```python 
+def func(a, b):{ 
+    c = a + b; 
+    return c;
+}
+```
+
+### 4) 
+**Viper input**
+``` python 
+int :: x_a = 10; 
+list :: y = range(0,x_a); 
+for i in y: { print(i); }
+```
+**Python output**
+``` python 
+x_a = 10
+assert isinstance(x_a, int)
+y = range(0,x_a) 
+assert isinstance(y, list)
+for i in y: 
+    print(i)
+```
+
+### 5) 
+**Viper input**
+``` python 
+NoneType :: def nthFib(int :: n):{
+    int :: res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
+    print(res,'is',str(n)+'th fibonacci number');
+};
+nthFib(12);
+```
+**Python output**
+``` python 
+def nthFib(n){
+    assert isinstance(n, int)
+    res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
+    assert isinstance(res, int)
+    print(res,'is',str(n)+'th fibonacci number')
+}
+nthFib(12)
+```
+
 # Syntactic Analysis
 ## For TAs: shell script to set up virtual environment and run full code examples for HW2
 For hw1 grading, please refer to the Tokenizing section.
@@ -58,6 +160,53 @@ ArgumentListRest -> <PYTHON_CODE, ,> Expression ArgumentListRest | ε
 Loop -> <PYTHON_CODE, for> <PYTHON_CODE> <PYTHON_CODE, in> Python <LBRACE> StatementList <RBRACE>
 ```
 
+## Error Handling
+Our parser handles syntactic errors. We implement a stack based error handler that creates a new local error context for each recursive call, only propagating the errors from true syntactic errors. In this way, our parser does not throw errors coming from the regular tree search of the recursive parser. Below 
+
+```Python 
+"""Error handling: stack management"""
+ def push_error_context(self):
+     # Create a new temporary error context on the stack
+     self.error_context_stack.append([])
+
+ def pop_error_context(self, success):
+     # Pop the top error context and commit to main error list if unsuccessful
+     if self.error_context_stack:
+         temp_errors = self.error_context_stack.pop()
+         if not success and temp_errors:
+             self.err.extend(temp_errors)
+
+ def add_error(self, message):
+     # token = self.current_token()
+     token = None
+     error = ParserError(message, self.position, token)
+     if self.error_context_stack:
+         self.error_context_stack[-1].append(error)
+     else:
+         self.err.append(error)
+
+"""Error handling: Local error context"""
+ def parse_statement(self):
+     pos = self.position
+     self.push_error_context()
+     type_decl = self.parse_type_declaration()
+     if type_decl is not None:
+         stmt_prime = self.parse_statement_prime()
+         if stmt_prime is not None:
+             self.pop_error_context(True)
+             return ("Statement", type_decl, stmt_prime)
+         self.add_error("Expected StatementPrime after TypeDeclaration")
+         self.position = pos
+
+     expr_stmt = self.parse_expression_statement()
+     if expr_stmt is not None:
+         self.pop_error_context(True)
+         return ("Statement", expr_stmt)
+
+     self.pop_error_context(False)
+     self.add_error("Expected a TypeDeclaration or ExpressionStatement")
+     return None
+```
 
 ## Parsing Examples
 
