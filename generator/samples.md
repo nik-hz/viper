@@ -1,6 +1,6 @@
 # Viper to Python sample pairs
 Our code generator should convert the AST into correct python code. We check for compile time type consistency in the Viper code and then turn it to python. 
-We only support arithmetic and boolean operations and do not support prin, return, and function calls in this version.
+We only support arithmetic and boolean operations NoneType function and do not support print, return, and function calls in this version.
 
 ### 1) 
 **Viper input**
@@ -31,8 +31,9 @@ def print_one():
 ### 3) 
 **Viper input**
 ``` python 
-float :: def return_float():{ 
+NoneType :: def calculation1():{ 
     float :: num = 1.5; 
+    float :: num
     return num;
 };
 
