@@ -1018,11 +1018,12 @@ if __name__ == "__main__":
         {
             "code": """
             int :: x = 10; 
+            NoneType :: def foo(int :: n):{
+                int :: x = 1;
+            };
             int :: y = 1; 
-            x + y;
-            int :: a = 10; 
-            int :: b = 1; 
-            a + b;
+            int :: x = 12;
+            int :: a = x + y;
             """,
         }
     ]
