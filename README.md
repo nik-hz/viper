@@ -6,6 +6,7 @@ Nikolaus Holzer: nh2677
 
 # Viper to Python sample pairs
 Our code generator should convert the AST into correct python code. We check for compile time type consistency in the Viper code and then turn it to python. 
+We only support arithmetic and boolean operations and do not support print in this version.
 
 ### 1) 
 **Viper input**
@@ -18,11 +19,10 @@ NoneType :: def say_hello_world():{
 
 **Python output**
 ```python 
-def say_hello_world(){
+def say_hello_world():
     text = 'hello world'
     assert isinstance(text, str)
     print(text)
-}
 ```
 ### 2) 
 **Viper input**

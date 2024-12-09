@@ -1017,13 +1017,10 @@ if __name__ == "__main__":
     examples2 = [
         {
             "code": """
-            int :: x = 10; 
-            NoneType :: def foo(int :: n):{
-                int :: x = 1;
+            float :: def return_float():{ 
+                float :: num = 1.5; 
+                return num;
             };
-            int :: y = 1; 
-            int :: x = 12;
-            int :: a = x + y;
             """,
         }
     ]
