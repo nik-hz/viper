@@ -146,7 +146,109 @@ if __name__ == "__main__":
                 "<RBRACE, }>",
                 "<SEMICOLON, ;>",
             ],
-            "ast": None,
+            "ast": (
+                "Viper",
+                (
+                    "StatementList",
+                    [
+                        (
+                            "Statement",
+                            ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                            (
+                                "StatementPrime",
+                                ("VAR", "x_a"),
+                                ("ASSIGN", "="),
+                                ("Expression", ("SimpleExpression", ("PYTHON_CODE", "10")), ("ExpressionPrime", None)),
+                                ("SEMICOLON", ";"),
+                            ),
+                        ),
+                        (
+                            "Statement",
+                            ("TypeDeclaration", ("TYPE", "list"), ("TYPE_DEC", "::")),
+                            (
+                                "StatementPrime",
+                                ("VAR", "y"),
+                                ("ASSIGN", "="),
+                                (
+                                    "Expression",
+                                    (
+                                        "SimpleExpression",
+                                        (
+                                            ("TYPE", "range"),
+                                            ("LPAREN", "("),
+                                            [("Python", ("PYTHON_CODE", "0")), ("Python", ("PYTHON_CODE", ","))],
+                                            [("Var", ("VAR", "x_a"))],
+                                            None,
+                                            None,
+                                            None,
+                                            ("RPAREN", ")"),
+                                        ),
+                                    ),
+                                    ("ExpressionPrime", None),
+                                ),
+                                ("SEMICOLON", ";"),
+                            ),
+                        ),
+                        (
+                            "Statement",
+                            (
+                                "ExpressionStatement",
+                                (
+                                    "Expression",
+                                    (
+                                        "SimpleExpression",
+                                        (
+                                            "Loop",
+                                            ("PYTHON_CODE", "for"),
+                                            [
+                                                ("Python", ("PYTHON_CODE", "i")),
+                                                ("Python", ("PYTHON_CODE", "in")),
+                                                ("Python", ("PYTHON_CODE", "y:")),
+                                            ],
+                                            (
+                                                "StatementList",
+                                                [
+                                                    (
+                                                        "Statement",
+                                                        (
+                                                            "ExpressionStatement",
+                                                            (
+                                                                "Expression",
+                                                                ("SimpleExpression", ("PYTHON_CODE", "print")),
+                                                                (
+                                                                    "ExpressionPrime",
+                                                                    (
+                                                                        "SimpleExpression",
+                                                                        (
+                                                                            "ParenthesizedExpression",
+                                                                            (
+                                                                                "Expression",
+                                                                                (
+                                                                                    "SimpleExpression",
+                                                                                    ("PYTHON_CODE", "i"),
+                                                                                ),
+                                                                                ("ExpressionPrime", None),
+                                                                            ),
+                                                                        ),
+                                                                    ),
+                                                                    ("ExpressionPrime", None),
+                                                                ),
+                                                            ),
+                                                            ("SEMICOLON", ";"),
+                                                        ),
+                                                    )
+                                                ],
+                                            ),
+                                        ),
+                                    ),
+                                    ("ExpressionPrime", None),
+                                ),
+                                ("SEMICOLON", ";"),
+                            ),
+                        ),
+                    ],
+                ),
+            ),
         },
         {
             "code": """
@@ -179,7 +281,7 @@ if __name__ == "__main__":
                 "<RBRACE, }>",
                 "<SEMICOLON, ;>",
             ],
-            "ast": None,  # No assertion for this case
+            "ast": None,  # Syntactic error in this case
         },
         {
             "code": """
@@ -218,7 +320,88 @@ if __name__ == "__main__":
                 "<RBRACE, }>",
                 "<SEMICOLON, ;>",
             ],
-            "ast": None,  # No assertion for this case
+            "ast": (
+                "Viper",
+                (
+                    "StatementList",
+                    [
+                        (
+                            "Statement",
+                            ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                            (
+                                "StatementPrime",
+                                ("DEF", "def"),
+                                ("FUNC", "func"),
+                                ("LPAREN", "("),
+                                (
+                                    "ParameterList",
+                                    [
+                                        (
+                                            "Parameter",
+                                            ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                                            ("VAR", "a"),
+                                        ),
+                                        (
+                                            "Parameter",
+                                            ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                                            ("VAR", "b"),
+                                        ),
+                                    ],
+                                ),
+                                ("RPAREN", ")"),
+                                ("PYTHON_CODE", ":"),
+                                (
+                                    "FunctionBody",
+                                    ("LBRACE", "{"),
+                                    (
+                                        "StatementList",
+                                        [
+                                            (
+                                                "Statement",
+                                                ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                                                (
+                                                    "StatementPrime",
+                                                    ("VAR", "c"),
+                                                    ("ASSIGN", "="),
+                                                    (
+                                                        "Expression",
+                                                        ("SimpleExpression", "VAR", ("VAR", "a")),
+                                                        (
+                                                            "ExpressionPrime",
+                                                            ("SimpleExpression", "OP", ("OP", "+")),
+                                                            (
+                                                                "ExpressionPrime",
+                                                                ("SimpleExpression", "VAR", ("VAR", "b")),
+                                                                ("ExpressionPrime", None),
+                                                            ),
+                                                        ),
+                                                    ),
+                                                    ("SEMICOLON", ";"),
+                                                ),
+                                            )
+                                        ],
+                                    ),
+                                    (
+                                        "ReturnStatement",
+                                        ("PYTHON_CODE", "return"),
+                                        (
+                                            "ExpressionStatement",
+                                            (
+                                                "Expression",
+                                                ("SimpleExpression", "VAR", ("VAR", "c")),
+                                                ("ExpressionPrime", None),
+                                            ),
+                                            ("SEMICOLON", ";"),
+                                        ),
+                                    ),
+                                    ("RBRACE", "}"),
+                                    ("SEMICOLON", ";"),
+                                ),
+                            ),
+                        )
+                    ],
+                ),
+            ),
         },
         {
             "code": """
@@ -232,7 +415,25 @@ if __name__ == "__main__":
                 "<PYTHON_CODE, 10>",
                 "<SEMICOLON, ;>",
             ],
-            "ast": None,  # No assertion for this case
+            "ast": (
+                "Viper",
+                (
+                    "StatementList",
+                    [
+                        (
+                            "Statement",
+                            ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                            (
+                                "StatementPrime",
+                                ("VAR", "x_a"),
+                                ("ASSIGN", "="),
+                                ("Expression", ("SimpleExpression", ("PYTHON_CODE", "10")), ("ExpressionPrime", None)),
+                                ("SEMICOLON", ";"),
+                            ),
+                        )
+                    ],
+                ),
+            ),
         },
         {
             "code": """
@@ -244,13 +445,589 @@ if __name__ == "__main__":
             };
             nthFib(12);
             """,
-            "tokens": None,
-            "ast": None,  # No assertion for this case
+            "tokens": [
+                "<PYTHON_CODE, from>",
+                "<PYTHON_CODE, math>",
+                "<PYTHON_CODE, import>",
+                "<PYTHON_CODE, sqrt>",
+                "<SEMICOLON, ;>",
+                "<TYPE, NoneType>",
+                "<TYPE_DEC, ::>",
+                "<DEF, def>",
+                "<FUNC, nthFib>",
+                "<LPAREN, (>",
+                "<TYPE, int>",
+                "<TYPE_DEC, ::>",
+                "<VAR, n>",
+                "<RPAREN, )>",
+                "<PYTHON_CODE, :>",
+                "<LBRACE, {>",
+                "<TYPE, int>",
+                "<TYPE_DEC, ::>",
+                "<VAR, res>",
+                "<ASSIGN, =>",
+                "<LPAREN, (>",
+                "<LPAREN, (>",
+                "<LPAREN, (>",
+                "<PYTHON_CODE, 1>",
+                "<OP, +>",
+                "<PYTHON_CODE, sqrt>",
+                "<LPAREN, (>",
+                "<PYTHON_CODE, 5>",
+                "<RPAREN, )>",
+                "<RPAREN, )>",
+                "<OP, **>",
+                "<VAR, n>",
+                "<RPAREN, )>",
+                "<OP, ->",
+                "<LPAREN, (>",
+                "<LPAREN, (>",
+                "<PYTHON_CODE, 1>",
+                "<OP, ->",
+                "<PYTHON_CODE, sqrt>",
+                "<LPAREN, (>",
+                "<PYTHON_CODE, 5>",
+                "<RPAREN, )>",
+                "<RPAREN, )>",
+                "<RPAREN, )>",
+                "<OP, **>",
+                "<VAR, n>",
+                "<RPAREN, )>",
+                "<OP, />",
+                "<LPAREN, (>",
+                "<PYTHON_CODE, 2>",
+                "<OP, **>",
+                "<VAR, n>",
+                "<OP, *>",
+                "<PYTHON_CODE, sqrt>",
+                "<LPAREN, (>",
+                "<PYTHON_CODE, 5>",
+                "<RPAREN, )>",
+                "<RPAREN, )>",
+                "<SEMICOLON, ;>",
+                "<PYTHON_CODE, print>",
+                "<LPAREN, (>",
+                "<VAR, res>",
+                "<PYTHON_CODE, ,>",
+                "<PYTHON_CODE, 'is'>",
+                "<PYTHON_CODE, ,>",
+                "<TYPE, str>",
+                "<LPAREN, (>",
+                "<VAR, n>",
+                "<RPAREN, )>",
+                "<OP, +>",
+                "<PYTHON_CODE, 'th>",
+                "<PYTHON_CODE, fibonacci>",
+                "<PYTHON_CODE, number'>",
+                "<RPAREN, )>",
+                "<SEMICOLON, ;>",
+                "<RBRACE, }>",
+                "<SEMICOLON, ;>",
+                "<FUNC, nthFib>",
+                "<LPAREN, (>",
+                "<PYTHON_CODE, 12>",
+                "<RPAREN, )>",
+                "<SEMICOLON, ;>",
+            ],
+            "ast": (
+                "Viper",
+                (
+                    "StatementList",
+                    [
+                        (
+                            "Statement",
+                            (
+                                "ExpressionStatement",
+                                (
+                                    "Expression",
+                                    ("SimpleExpression", ("PYTHON_CODE", "from")),
+                                    (
+                                        "ExpressionPrime",
+                                        ("SimpleExpression", ("PYTHON_CODE", "math")),
+                                        (
+                                            "ExpressionPrime",
+                                            ("SimpleExpression", ("PYTHON_CODE", "import")),
+                                            (
+                                                "ExpressionPrime",
+                                                ("SimpleExpression", ("PYTHON_CODE", "sqrt")),
+                                                ("ExpressionPrime", None),
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                                ("SEMICOLON", ";"),
+                            ),
+                        ),
+                        (
+                            "Statement",
+                            ("TypeDeclaration", ("TYPE", "NoneType"), ("TYPE_DEC", "::")),
+                            (
+                                "StatementPrime",
+                                ("DEF", "def"),
+                                ("FUNC", "nthFib"),
+                                ("LPAREN", "("),
+                                (
+                                    "ParameterList",
+                                    [
+                                        (
+                                            "Parameter",
+                                            ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                                            ("VAR", "n"),
+                                        )
+                                    ],
+                                ),
+                                ("RPAREN", ")"),
+                                ("PYTHON_CODE", ":"),
+                                (
+                                    "FunctionBody",
+                                    ("LBRACE", "{"),
+                                    (
+                                        "StatementList",
+                                        [
+                                            (
+                                                "Statement",
+                                                ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                                                (
+                                                    "StatementPrime",
+                                                    ("VAR", "res"),
+                                                    ("ASSIGN", "="),
+                                                    (
+                                                        "Expression",
+                                                        (
+                                                            "SimpleExpression",
+                                                            (
+                                                                "ParenthesizedExpression",
+                                                                (
+                                                                    "Expression",
+                                                                    (
+                                                                        "SimpleExpression",
+                                                                        (
+                                                                            "ParenthesizedExpression",
+                                                                            (
+                                                                                "Expression",
+                                                                                (
+                                                                                    "SimpleExpression",
+                                                                                    (
+                                                                                        "ParenthesizedExpression",
+                                                                                        (
+                                                                                            "Expression",
+                                                                                            (
+                                                                                                "SimpleExpression",
+                                                                                                ("PYTHON_CODE", "1"),
+                                                                                            ),
+                                                                                            (
+                                                                                                "ExpressionPrime",
+                                                                                                (
+                                                                                                    "SimpleExpression",
+                                                                                                    "OP",
+                                                                                                    ("OP", "+"),
+                                                                                                ),
+                                                                                                (
+                                                                                                    "ExpressionPrime",
+                                                                                                    (
+                                                                                                        "SimpleExpression",
+                                                                                                        (
+                                                                                                            "PYTHON_CODE",
+                                                                                                            "sqrt",
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                    (
+                                                                                                        "ExpressionPrime",
+                                                                                                        (
+                                                                                                            "SimpleExpression",
+                                                                                                            (
+                                                                                                                "ParenthesizedExpression",
+                                                                                                                (
+                                                                                                                    "Expression",
+                                                                                                                    (
+                                                                                                                        "SimpleExpression",
+                                                                                                                        (
+                                                                                                                            "PYTHON_CODE",
+                                                                                                                            "5",
+                                                                                                                        ),
+                                                                                                                    ),
+                                                                                                                    (
+                                                                                                                        "ExpressionPrime",
+                                                                                                                        None,
+                                                                                                                    ),
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                        ),
+                                                                                                        (
+                                                                                                            "ExpressionPrime",
+                                                                                                            None,
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                ),
+                                                                                            ),
+                                                                                        ),
+                                                                                    ),
+                                                                                ),
+                                                                                (
+                                                                                    "ExpressionPrime",
+                                                                                    (
+                                                                                        "SimpleExpression",
+                                                                                        "OP",
+                                                                                        ("OP", "**"),
+                                                                                    ),
+                                                                                    (
+                                                                                        "ExpressionPrime",
+                                                                                        (
+                                                                                            "SimpleExpression",
+                                                                                            "VAR",
+                                                                                            ("VAR", "n"),
+                                                                                        ),
+                                                                                        ("ExpressionPrime", None),
+                                                                                    ),
+                                                                                ),
+                                                                            ),
+                                                                        ),
+                                                                    ),
+                                                                    (
+                                                                        "ExpressionPrime",
+                                                                        ("SimpleExpression", "OP", ("OP", "-")),
+                                                                        (
+                                                                            "ExpressionPrime",
+                                                                            (
+                                                                                "SimpleExpression",
+                                                                                (
+                                                                                    "ParenthesizedExpression",
+                                                                                    (
+                                                                                        "Expression",
+                                                                                        (
+                                                                                            "SimpleExpression",
+                                                                                            (
+                                                                                                "ParenthesizedExpression",
+                                                                                                (
+                                                                                                    "Expression",
+                                                                                                    (
+                                                                                                        "SimpleExpression",
+                                                                                                        (
+                                                                                                            "PYTHON_CODE",
+                                                                                                            "1",
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                    (
+                                                                                                        "ExpressionPrime",
+                                                                                                        (
+                                                                                                            "SimpleExpression",
+                                                                                                            "OP",
+                                                                                                            (
+                                                                                                                "OP",
+                                                                                                                "-",
+                                                                                                            ),
+                                                                                                        ),
+                                                                                                        (
+                                                                                                            "ExpressionPrime",
+                                                                                                            (
+                                                                                                                "SimpleExpression",
+                                                                                                                (
+                                                                                                                    "PYTHON_CODE",
+                                                                                                                    "sqrt",
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                            (
+                                                                                                                "ExpressionPrime",
+                                                                                                                (
+                                                                                                                    "SimpleExpression",
+                                                                                                                    (
+                                                                                                                        "ParenthesizedExpression",
+                                                                                                                        (
+                                                                                                                            "Expression",
+                                                                                                                            (
+                                                                                                                                "SimpleExpression",
+                                                                                                                                (
+                                                                                                                                    "PYTHON_CODE",
+                                                                                                                                    "5",
+                                                                                                                                ),
+                                                                                                                            ),
+                                                                                                                            (
+                                                                                                                                "ExpressionPrime",
+                                                                                                                                None,
+                                                                                                                            ),
+                                                                                                                        ),
+                                                                                                                    ),
+                                                                                                                ),
+                                                                                                                (
+                                                                                                                    "ExpressionPrime",
+                                                                                                                    None,
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                ),
+                                                                                            ),
+                                                                                        ),
+                                                                                        ("ExpressionPrime", None),
+                                                                                    ),
+                                                                                ),
+                                                                            ),
+                                                                            (
+                                                                                "ExpressionPrime",
+                                                                                (
+                                                                                    "SimpleExpression",
+                                                                                    "OP",
+                                                                                    ("OP", "**"),
+                                                                                ),
+                                                                                (
+                                                                                    "ExpressionPrime",
+                                                                                    (
+                                                                                        "SimpleExpression",
+                                                                                        "VAR",
+                                                                                        ("VAR", "n"),
+                                                                                    ),
+                                                                                    ("ExpressionPrime", None),
+                                                                                ),
+                                                                            ),
+                                                                        ),
+                                                                    ),
+                                                                ),
+                                                            ),
+                                                        ),
+                                                        (
+                                                            "ExpressionPrime",
+                                                            ("SimpleExpression", "OP", ("OP", "/")),
+                                                            (
+                                                                "ExpressionPrime",
+                                                                (
+                                                                    "SimpleExpression",
+                                                                    (
+                                                                        "ParenthesizedExpression",
+                                                                        (
+                                                                            "Expression",
+                                                                            ("SimpleExpression", ("PYTHON_CODE", "2")),
+                                                                            (
+                                                                                "ExpressionPrime",
+                                                                                (
+                                                                                    "SimpleExpression",
+                                                                                    "OP",
+                                                                                    ("OP", "**"),
+                                                                                ),
+                                                                                (
+                                                                                    "ExpressionPrime",
+                                                                                    (
+                                                                                        "SimpleExpression",
+                                                                                        "VAR",
+                                                                                        ("VAR", "n"),
+                                                                                    ),
+                                                                                    (
+                                                                                        "ExpressionPrime",
+                                                                                        (
+                                                                                            "SimpleExpression",
+                                                                                            "OP",
+                                                                                            ("OP", "*"),
+                                                                                        ),
+                                                                                        (
+                                                                                            "ExpressionPrime",
+                                                                                            (
+                                                                                                "SimpleExpression",
+                                                                                                (
+                                                                                                    "PYTHON_CODE",
+                                                                                                    "sqrt",
+                                                                                                ),
+                                                                                            ),
+                                                                                            (
+                                                                                                "ExpressionPrime",
+                                                                                                (
+                                                                                                    "SimpleExpression",
+                                                                                                    (
+                                                                                                        "ParenthesizedExpression",
+                                                                                                        (
+                                                                                                            "Expression",
+                                                                                                            (
+                                                                                                                "SimpleExpression",
+                                                                                                                (
+                                                                                                                    "PYTHON_CODE",
+                                                                                                                    "5",
+                                                                                                                ),
+                                                                                                            ),
+                                                                                                            (
+                                                                                                                "ExpressionPrime",
+                                                                                                                None,
+                                                                                                            ),
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                ),
+                                                                                                (
+                                                                                                    "ExpressionPrime",
+                                                                                                    None,
+                                                                                                ),
+                                                                                            ),
+                                                                                        ),
+                                                                                    ),
+                                                                                ),
+                                                                            ),
+                                                                        ),
+                                                                    ),
+                                                                ),
+                                                                ("ExpressionPrime", None),
+                                                            ),
+                                                        ),
+                                                    ),
+                                                    ("SEMICOLON", ";"),
+                                                ),
+                                            ),
+                                            (
+                                                "Statement",
+                                                (
+                                                    "ExpressionStatement",
+                                                    (
+                                                        "Expression",
+                                                        ("SimpleExpression", ("PYTHON_CODE", "print")),
+                                                        (
+                                                            "ExpressionPrime",
+                                                            (
+                                                                "SimpleExpression",
+                                                                (
+                                                                    "ParenthesizedExpression",
+                                                                    (
+                                                                        "Expression",
+                                                                        ("SimpleExpression", "VAR", ("VAR", "res")),
+                                                                        (
+                                                                            "ExpressionPrime",
+                                                                            ("SimpleExpression", ("PYTHON_CODE", ",")),
+                                                                            (
+                                                                                "ExpressionPrime",
+                                                                                (
+                                                                                    "SimpleExpression",
+                                                                                    ("PYTHON_CODE", "'is'"),
+                                                                                ),
+                                                                                (
+                                                                                    "ExpressionPrime",
+                                                                                    (
+                                                                                        "SimpleExpression",
+                                                                                        ("PYTHON_CODE", ","),
+                                                                                    ),
+                                                                                    (
+                                                                                        "ExpressionPrime",
+                                                                                        (
+                                                                                            "SimpleExpression",
+                                                                                            (
+                                                                                                ("TYPE", "str"),
+                                                                                                ("LPAREN", "("),
+                                                                                                None,
+                                                                                                [
+                                                                                                    (
+                                                                                                        "Var",
+                                                                                                        ("VAR", "n"),
+                                                                                                    )
+                                                                                                ],
+                                                                                                None,
+                                                                                                None,
+                                                                                                None,
+                                                                                                ("RPAREN", ")"),
+                                                                                            ),
+                                                                                        ),
+                                                                                        (
+                                                                                            "ExpressionPrime",
+                                                                                            (
+                                                                                                "SimpleExpression",
+                                                                                                "OP",
+                                                                                                ("OP", "+"),
+                                                                                            ),
+                                                                                            (
+                                                                                                "ExpressionPrime",
+                                                                                                (
+                                                                                                    "SimpleExpression",
+                                                                                                    (
+                                                                                                        "PYTHON_CODE",
+                                                                                                        "'th",
+                                                                                                    ),
+                                                                                                ),
+                                                                                                (
+                                                                                                    "ExpressionPrime",
+                                                                                                    (
+                                                                                                        "SimpleExpression",
+                                                                                                        (
+                                                                                                            "PYTHON_CODE",
+                                                                                                            "fibonacci",
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                    (
+                                                                                                        "ExpressionPrime",
+                                                                                                        (
+                                                                                                            "SimpleExpression",
+                                                                                                            (
+                                                                                                                "PYTHON_CODE",
+                                                                                                                "number'",
+                                                                                                            ),
+                                                                                                        ),
+                                                                                                        (
+                                                                                                            "ExpressionPrime",
+                                                                                                            None,
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                ),
+                                                                                            ),
+                                                                                        ),
+                                                                                    ),
+                                                                                ),
+                                                                            ),
+                                                                        ),
+                                                                    ),
+                                                                ),
+                                                            ),
+                                                            ("ExpressionPrime", None),
+                                                        ),
+                                                    ),
+                                                    ("SEMICOLON", ";"),
+                                                ),
+                                            ),
+                                        ],
+                                    ),
+                                    ("ReturnStatement", None),
+                                    ("RBRACE", "}"),
+                                    ("SEMICOLON", ";"),
+                                ),
+                            ),
+                        ),
+                        (
+                            "Statement",
+                            (
+                                "ExpressionStatement",
+                                (
+                                    "Expression",
+                                    (
+                                        "SimpleExpression",
+                                        (
+                                            "FunctionCall",
+                                            (
+                                                "ArgumentList",
+                                                [
+                                                    (
+                                                        "Expression",
+                                                        ("SimpleExpression", ("PYTHON_CODE", "12")),
+                                                        ("ExpressionPrime", None),
+                                                    )
+                                                ],
+                                            ),
+                                        ),
+                                    ),
+                                    ("ExpressionPrime", None),
+                                ),
+                                ("SEMICOLON", ";"),
+                            ),
+                        ),
+                    ],
+                ),
+            ),
         },
     ]
 
+    examples2 = [
+        {
+            "code": """
+            int :: x = 10; 
+            int :: y = 1; 
+            x + y;
+            int :: a = 10; 
+            int :: b = 1; 
+            a + b;
+            """,
+        }
+    ]
     # Run examples
-    for i, example in enumerate(examples, start=1):
+    for i, example in enumerate(examples2, start=1):
         run_example(
             pipeline,
             input_code=example["code"],

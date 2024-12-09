@@ -2,13 +2,120 @@
 Angel Cui: lc3542\
 Nikolaus Holzer: nh2677
 
+# Code Generation
+
+# Viper to Python sample pairs
+Our code generator should convert the AST into correct python code. We check for compile time type consistency in the Viper code and then turn it to python. 
+
+### 1) 
+**Viper input**
+``` python 
+NoneType :: def say_hello_world():{ 
+    string :: text = 'hello world'; 
+    print(text);
+};
+```
+
+**Python output**
+```python 
+def say_hello_world(){
+    text = 'hello world'
+    assert isinstance(text, str)
+    print(text)
+}
+```
+### 2) 
+**Viper input**
+``` python 
+str :: def say_hello_world():{ 
+    string :: text = 'hello world'; 
+    return text;
+};
+
+output = say_hello_world()
+```
+
+**Python output**
+```python 
+def say_hello_world(){
+    text = 'hello world'
+    assert isinstance(text, str)
+    return text
+}
+
+output = say_hello_world()
+assert isinstance(output, str)
+```
+
+### 3) 
+**Viper input**
+``` python 
+int :: def func(int :: a, int :: b):{ 
+    assert isinstance(a, int)
+    assert isinstance(b, int)
+    int :: c = a + b; 
+    assert isinstance(c, int)
+    return c;
+};
+```
+
+**Python output**
+```python 
+def func(a, b):{ 
+    c = a + b; 
+    return c;
+}
+```
+
+### 4) 
+**Viper input**
+``` python 
+int :: x_a = 10; 
+list :: y = range(0,x_a); 
+for i in y: { print(i); };
+```
+**Python output**
+``` python 
+x_a = 10
+assert isinstance(x_a, int)
+y = range(0,x_a) 
+assert isinstance(y, list)
+for i in y: 
+    print(i)
+```
+
+### 5) 
+**Viper input**
+``` python 
+NoneType :: def nthFib(int :: n):{
+    int :: res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
+    print(res,'is',str(n)+'th fibonacci number');
+};
+nthFib(12);
+```
+**Python output**
+``` python 
+def nthFib(n){
+    assert isinstance(n, int)
+    res = (((1+sqrt(5))**n)-((1-sqrt(5)))**n)/(2**n*sqrt(5));
+    assert isinstance(res, int)
+    print(res,'is',str(n)+'th fibonacci number')
+}
+nthFib(12)
+```
+
 # Syntactic Analysis
 ## For TAs: shell script to set up virtual environment and run full code examples for HW2
-For hw1 grading, please refer to the Tokenizing section.
+For hw2 grading, please refer to the Syntactic Analysis section.
 1) Make sure you are in the viper directory.
 2) Run ```chmod +x parser.sh``` to ensure executable access to the shell script.
-3) Run ```source ./parser.sh```. This will activate a virtual environment called viper and set you up with required dependencies, and run the five code examples and return the outputs.
-For grading please run `python parser` which will execute the `__main__.py` file in the scanner dir if ```source ./parser.sh``` fails. 
+3) Run ```source ./parser.sh```. This will activate a virtual environment called viper and set you up with required dependencies, and run the five code examples with the pipeline (with scanner + parser) and return the outputs.
+
+Please run `python run_viper.py` if ```source ./parser.sh``` fails. 
+
+Demo videos are divided into two videos, one going over the parser code and viper parser (Part 1), one going over the viper pipeline and examples programs (Part 2). Videos are uploaded to the Google Drive and can be accessed through this link through Lion Mail (need to log in to your Columbia Google Account): https://drive.google.com/drive/folders/1Dgx0PggO9zZVhKScSzEIXWRdzvQyOG7i?usp=sharing
+
+If you have issues accessing the videos (e.x. using Barnard email) please request access and we will grant access ASAP.
 
 ## Context Free Grammar for Viper AST
 ```code
@@ -58,108 +165,16 @@ ArgumentListRest -> <PYTHON_CODE, ,> Expression ArgumentListRest | ε
 Loop -> <PYTHON_CODE, for> <PYTHON_CODE> <PYTHON_CODE, in> Python <LBRACE> StatementList <RBRACE>
 ```
 
+### Terminals
+`<TYPE>`, `<TYPE_DEC>`, `<VAR>`, `<ASSIGN>`, `<SEMICOLON>`, `<DEF>`, `<FUNC>`, `<LPAREN>`, `<RPAREN>`, `<PYTHON_CODE, :>`, `<LBRACE>`, `<RBRACE>`, `<PYTHON_CODE, return>`, `<PYTHON_CODE>`, `<PYTHON_CODE, ,>`, `<OP>`, `<PYTHON_CODE, for>`, `<PYTHON_CODE, in>`, `epsilon`
+
+### Non-terminals
+`Viper`, `StatementList`, `Statement`, `Statement'`, `TypeDeclaration`, `ParameterList`, `ParameterListRest`, `Parameter`, `FunctionBody`, `ReturnStatement`, `ExpressionStatement`, `Expression`, `ExpressionPrime`, `SimpleExpression`, `Range`, `Python`, `Var`, `ArithmeticExpression`, `FunctionCall`, `ArgumentList`, `ArgumentListRest`, `Loop`
 
 ## Parsing Examples
 
 We show examples that illustrate how parsed viper code looks like.
-We only include the short examples below, when you run our scanner as instructed above, you would be able to see the full list of input and output (same as expected output).
-
-```Code:
-
-Running test case 1:
-Code:
- int :: x_a = 10; list :: y = range(0,x_a); for i in y: { print(i); };
-
-Tokens:
-<TYPE, int>, <TYPE_DEC, ::>, <VAR, x_a>, <ASSIGN, =>, <PYTHON_CODE, 10>,
-<SEMICOLON, ;>, <TYPE, list>, <TYPE_DEC, ::>, <VAR, y>, <ASSIGN, =>, 
-<TYPE, range>, <LPAREN, (>, <PYTHON_CODE, 0>, <PYTHON_CODE, ,>, <VAR, x_a>,
-<RPAREN, )>, <SEMICOLON, ;>, <PYTHON_CODE, for>, <PYTHON_CODE, i>, 
-<PYTHON_CODE, in>, <PYTHON_CODE, y:>, <LBRACE, {>, <PYTHON_CODE, print>, 
-<LPAREN, (>, <PYTHON_CODE, i>, <RPAREN, )>, <SEMICOLON, ;>, <RBRACE, }>, <SEMICOLON, ;>
-
-AST:
-- VariableDeclaration
-   - TypeDeclaration
-      - <TYPE, int> <TYPE_DEC, ::>
-   - Statement'
-      - <VAR, x_a> <ASSIGN, => <PYTHON_CODE, 10> <SEMICOLON, ;>
-- VariableDeclaration
-   - TypeDeclaration
-      - <TYPE, list> <TYPE_DEC, ::>
-   - Statement'
-      - <VAR, y> <ASSIGN, => <TYPE, range> <LPAREN, (> <PYTHON_CODE, 0> <PYTHON_CODE, ,> <VAR, x_a> <RPAREN, )> <SEMICOLON, ;>
-- ExpressionStatement
-   - Expression
-         - Loop
-            - <PYTHON_CODE, for> <PYTHON_CODE, i> <PYTHON_CODE, in> <PYTHON_CODE, y:> <LBRACE, {> <PYTHON_CODE, print> <LPAREN, (> <PYTHON_CODE, i> <RPAREN, )> <SEMICOLON, ;> <RBRACE, }>
-   - <SIMILON, ;>
-
-----------------------------------------
-
-Running test case 2: (Error catched in parsing: python_code type_dec is not valid)
-Code:
- str :: def say_hello_world(){ string :: text = 'hello world'; print(text);};
-
-Tokens:
-<TYPE, str>, <TYPE_DEC, ::>, <DEF, def>, <FUNC, say_hello_world>, <LPAREN, (>,
-<RPAREN, )>, <LBRACE, {>, <PYTHON_CODE, string>, <TYPE_DEC, ::>, <VAR, text>,
-<ASSIGN, =>, <PYTHON_CODE, 'hello>, <PYTHON_CODE, world'>, <SEMICOLON, ;>,
-<PYTHON_CODE, print>, <LPAREN, (>, <VAR, text>, <RPAREN, )>, <SEMICOLON, ;>,
-<RBRACE, }>, <SEMICOLON, ;>
-
-AST:
-- VariableDeclaration
-   - TypeDeclaration
-      - <TYPE, str> <TYPE_DEC, ::>
-   - Statement'
-      - <DEF, def> <FUNC, say_hello_world> <LPAREN, (> <RPAREN, )> <LBRACE, {> <PYTHON_CODE, string>ERROR (Here there should be an error)
-
-
-----------------------------------------
-
-Running test case 3:
-Code:
- int :: def func(int :: a, int :: b):{ int :: c = a + b; return c;}
-
-Tokens:
-<TYPE, int>, <TYPE_DEC, ::>, <DEF, def>, <FUNC, func>, <LPAREN, (>,
-<TYPE, int>, <TYPE_DEC, ::>, <VAR, a>, <PYTHON_CODE, ,>, <TYPE, int>,
-<TYPE_DEC, ::>, <VAR, b>, <RPAREN, )>, <PYTHON_CODE, :>, <LBRACE, {>,
-<TYPE, int>, <TYPE_DEC, ::>, <VAR, c>, <ASSIGN, =>, <VAR, a>,
-<OP, +>, <VAR, b>, <SEMICOLON, ;>, <PYTHON_CODE, return>, <VAR, c>,
-<SEMICOLON, ;>, <RBRACE, }>
-
-AST:
-- VariableDeclaration
-   - TypeDeclaration
-      - <TYPE, int> <TYPE_DEC, ::>
-   - Statement'
-      - <DEF, def> <FUNC, func> <LPAREN, (> 
-      - ParameterList
-         - <TYPE, int> <TYPE_DEC, ::> <VAR, a> <PYTHON_CODE, ,> <TYPE, int> <TYPE_DEC, ::> <VAR, b> 
-      - <RPAREN, )> 
-      - FunctionBody
-         - <LBRACE, {> 
-         - StatementList
-            - TypeDeclaration
-               - <TYPE, int> <TYPE_DEC, ::>
-            - Statement'
-               - <VAR, c> <ASSIGN, =>
-               - ExpressionStatement
-                  - ArithmeticExpression
-                   - <VAR, a> <OP, +> <VAR, b>
-                  - <SEMICOLON, ;>
-         - ReturnStatement
-            - <PYTHON_CODE, return> 
-            - ExpressionStatement
-               - Expression
-                  - <VAR, c>
-            - <SEMICOLON>
-         - <RBRACE, }>
-
-----------------------------------------
-```
+The 5 examples and their expected output after running our pipeline can be found in ```hw2_expected.txt```, when you run our scanner as instructed above, you would be able to see the full list of input and output (same as expected outputs in ```hw2_expected.txt```). Assertions in the ```run_viper.py``` pipeline make sure that the outputs from the pipeline match the expected ones.
 
 # Tokenizing
 ## For TAs: shell script to set up virtual environment and run full code examples for HW1
