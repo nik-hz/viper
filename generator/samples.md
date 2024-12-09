@@ -7,7 +7,7 @@ Our code generator should convert the AST into correct python code. We check for
 NoneType :: def say_hello_world():{ 
     string :: text = 'hello world'; 
     print(text);
-    }
+};
 ```
 
 **Python output**
@@ -24,7 +24,7 @@ def say_hello_world(){
 str :: def say_hello_world():{ 
     string :: text = 'hello world'; 
     return text;
-    }
+};
 
 output = say_hello_world()
 ```
@@ -50,7 +50,7 @@ int :: def func(int :: a, int :: b):{
     int :: c = a + b; 
     assert isinstance(c, int)
     return c;
-}
+};
 ```
 
 **Python output**
@@ -66,7 +66,7 @@ def func(a, b):{
 ``` python 
 int :: x_a = 10; 
 list :: y = range(0,x_a); 
-for i in y: { print(i); }
+for i in y: { print(i); };
 ```
 **Python output**
 ``` python 
