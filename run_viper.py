@@ -1017,12 +1017,10 @@ if __name__ == "__main__":
     examples2 = [
         {
             "code": """
-            int :: x = 10; 
-            int :: y = 1; 
-            x + y;
-            int :: a = 10; 
-            int :: b = 1; 
-            a + b;
+            float :: def return_float():{ 
+                float :: num = 1.5; 
+                return num;
+            };
             """,
         }
     ]
