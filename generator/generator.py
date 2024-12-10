@@ -147,7 +147,8 @@ class ViperToPythonGenerator:
             builder += ")"
             return builder
         elif cfg == "ArgumentList":
-            builder = self._generate_expression(next_expr[0], builder)
+            if next_expr:
+                builder = self._generate_expression(next_expr[0], builder)
             return builder
 
 
