@@ -13,6 +13,8 @@ For grading please run `python vpc.py` which will run the Viper compiler on the 
 
 Please find the demo video at: https://drive.google.com/drive/folders/1Dgx0PggO9zZVhKScSzEIXWRdzvQyOG7i?usp=sharing
 
+Demo video folder is open to CU emails, please log in to see the videos, or request access, we will grant access as soon as we can.
+
 ## Viper to Python sample pairs
 Our code generator should convert the AST into correct python code. We check for compile time type consistency in the Viper code and then turn it to python. 
 Please refer to the ex{num}_correct.py as expected output for ex{num}.vp viper code.
