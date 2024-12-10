@@ -134,12 +134,10 @@ if __name__ == "__main__":
     examples = [
         {
             "code": """
-            NoneType :: def print_one():{ 
-                int :: num = 1;
-                print(num);
+            int :: def calculation1():{ 
+                float :: num = 1.5; 
+                return num;
             };
-
-            print_one();
             """,
         }
     ]
