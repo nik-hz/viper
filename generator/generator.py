@@ -7,23 +7,23 @@ class ViperToPythonGenerator:
         return self.indent_str * self.indent_level
 
     def generate(self, ast):
-        print("DEBUG: Starting generate with ast:", ast[0])
+        # print("DEBUG: Starting generate with ast:", ast[0])
         if ast[0] == "Viper":
             return self.generate_program(ast[1])
         return ""
 
     def generate_program(self, statement_list):
-        print("DEBUG: Starting generate_program with:", statement_list[0])
+        # print("DEBUG: Starting generate_program with:", statement_list[0])
         if statement_list[0] == "StatementList":
             statements = [self.generate_statement(stmt) for stmt in statement_list[1]]
-            print("DEBUG: Generated statements:", statements)
+            # print("DEBUG: Generated statements:", statements)
             result = "\n".join(stmt for stmt in statements if stmt)
-            print("DEBUG: Final program:", result)
+            # print("DEBUG: Final program:", result)
             return result
         return ""
 
     def generate_statement(self, statement):
-        print("DEBUG: Starting generate_statement with:", statement[0])
+        # print("DEBUG: Starting generate_statement with:", statement[0])
         if statement[0] != "Statement":
             return ""
 
@@ -37,12 +37,12 @@ class ViperToPythonGenerator:
         return ""
 
     def handle_type_declaration(self, type_decl, statement_prime):
-        print("DEBUG: Starting handle_type_declaration")
+        # print("DEBUG: Starting handle_type_declaration")
         type_name = type_decl[1][1]
-        print("DEBUG: Type name:", type_name)
+        # print("DEBUG: Type name:", type_name)
 
         if statement_prime[0] == "StatementPrime":
-            print("DEBUG: Statement prime:", statement_prime[1])
+            # print("DEBUG: Statement prime:", statement_prime[1])
             if isinstance(statement_prime[1], tuple) and statement_prime[1][0] == "DEF":
                 return self.generate_function(type_name, statement_prime)
             # Handle variable declaration
@@ -66,13 +66,13 @@ class ViperToPythonGenerator:
         return ""
 
     def generate_function(self, return_type, statement_prime):
-        print("DEBUG: Starting generate_function")
+        # print("DEBUG: Starting generate_function")
         # Extract function name from FUNC tuple
         func_name = None
         for item in statement_prime:
             if isinstance(item, tuple) and item[0] == "FUNC":
                 func_name = item[1]
-                print("DEBUG: Found function name:", func_name)
+                # print("DEBUG: Found function name:", func_name)
                 break
 
         # Find function body
@@ -80,7 +80,7 @@ class ViperToPythonGenerator:
         for item in statement_prime:
             if isinstance(item, tuple) and item[0] == "FunctionBody":
                 body = item
-                print("DEBUG: Found function body")
+                # print("DEBUG: Found function body")
                 break
 
         if not func_name or not body:
@@ -93,7 +93,7 @@ class ViperToPythonGenerator:
         body_statements = body[2][1]  # StatementList within FunctionBody
         statements = [self.generate_statement(stmt) for stmt in body_statements]
         body_code = "\n".join(stmt for stmt in statements if stmt)
-        print("DEBUG: Generated body code:", body_code)
+        # print("DEBUG: Generated body code:", body_code)
         self.indent_level -= 1
 
         if body_code:
@@ -102,7 +102,7 @@ class ViperToPythonGenerator:
         return result
 
     def generate_expression(self, expression):
-        print("DEBUG: Starting generate_expression with:", expression if isinstance(expression, tuple) else expression)
+        # print("DEBUG: Starting generate_expression with:", expression if isinstance(expression, tuple) else expression)
         st = ""
         st = self._generate_expression(expression, st)
         return st
@@ -142,7 +142,7 @@ class ViperToPythonGenerator:
 def convert_viper_to_python(ast):
     generator = ViperToPythonGenerator()
     result = generator.generate(ast)
-    print("DEBUG: Final generated code:", result)
+    # print("DEBUG: Final generated code:", result)
     return result
 
 

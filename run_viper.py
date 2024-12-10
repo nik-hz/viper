@@ -74,6 +74,14 @@ class Pipeline:
                 print(f"Expected: {expected_ast}")
                 print(f"Got:      {ast}")
 
+        tc = TypeChecker(tokens)
+
+        if not tc.check_types:
+            print("Error with types!")
+            return None
+        else:
+            print("Types ok!")
+
         generator = ViperToPythonGenerator()
         generated_code = generator.generate(ast)
 

@@ -14,6 +14,7 @@ class TypeChecker:
         Entry point for type checking.
         """
         self._check_types_recursive(self.token_list, 0)
+        return True
         
 
     def _check_types_recursive(self, tokens, start_index):
