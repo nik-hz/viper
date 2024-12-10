@@ -1053,7 +1053,7 @@ if __name__ == "__main__":
     ]
     '''
     # Run examples for pa2
-    '''
+    """
     for i, example in enumerate(examples, start=1):
         run_example(
             pipeline,
@@ -1062,7 +1062,7 @@ if __name__ == "__main__":
             #expected_ast=example.get("ast"),
             example_num=i,
         )
-    '''
+    """
     # Run examples through files end with .vp in examples folder
     for file in os.listdir("./examples"):
         if file.endswith(".vp"):
