@@ -116,18 +116,19 @@ class ViperToPythonGenerator:
 
         # base case next_expr is a string and not tuple
         if isinstance(next_expr, str):
-            builder += (next_expr)
+            builder += next_expr
             return builder
         elif next_expr == None:
             return builder
 
         if cfg == "ParenthesizedExpression":
-            builder += ("(")
+            builder += "("
             builder = self._generate_expression(next_expr, builder)
-            builder += (")")
+            builder += ")"
             return builder
         elif cfg == "Expression":
-            builder += (middle_expr[-1][1])
+            # builder += middle_expr[-1][1]
+            builder = self._generate_expression(middle_expr, builder)
             builder = self._generate_expression(next_expr, builder)
             return builder
         elif cfg == "ExpressionPrime":
@@ -136,6 +137,17 @@ class ViperToPythonGenerator:
             return builder
         elif cfg == "SimpleExpression":
             builder = self._generate_expression(next_expr, builder)
+            return builder
+        elif cfg == "FunctionCall":
+            builder = self._generate_expression(middle_expr, builder)
+            builder += "("
+            temp = self._generate_expression(next_expr, builder)
+            if temp:
+                builder = temp
+            builder += ")"
+            return builder
+        elif cfg == "ArgumentList":
+            builder = self._generate_expression(next_expr[0], builder)
             return builder
 
 
@@ -183,7 +195,33 @@ ast1 = (
                                         ),
                                         ("SEMICOLON", ";"),
                                     ),
-                                )
+                                ),
+                                (
+                                    "Statement",
+                                    (
+                                        "ExpressionStatement",
+                                        (
+                                            "Expression",
+                                            ("SimpleExpression", ("PYTHON_CODE", "print")),
+                                            (
+                                                "ExpressionPrime",
+                                                (
+                                                    "SimpleExpression",
+                                                    (
+                                                        "ParenthesizedExpression",
+                                                        (
+                                                            "Expression",
+                                                            ("SimpleExpression", "VAR", ("VAR", "num")),
+                                                            ("ExpressionPrime", None),
+                                                        ),
+                                                    ),
+                                                ),
+                                                ("ExpressionPrime", None),
+                                            ),
+                                        ),
+                                        ("SEMICOLON", ";"),
+                                    ),
+                                ),
                             ],
                         ),
                         ("ReturnStatement", None),
@@ -191,93 +229,39 @@ ast1 = (
                         ("SEMICOLON", ";"),
                     ),
                 ),
-            )
-        ],
-    ),
-)
-ast2 = (
-    "Viper",
-    (
-        "StatementList",
-        [
+            ),
             (
                 "Statement",
-                ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
                 (
-                    "StatementPrime",
-                    ("VAR", "num"),
-                    ("ASSIGN", "="),
-                    ("Expression", ("SimpleExpression", ("PYTHON_CODE", "1")), ("ExpressionPrime", None)),
+                    "ExpressionStatement",
+                    (
+                        "Expression",
+                        (
+                            "SimpleExpression",
+                            (
+                                "FunctionCall",
+                                ("FUNC", "print_one"),
+                                (
+                                    "ArgumentList",
+                                    [
+                                        (
+                                            "Expression",
+                                            ("SimpleExpression", ("PYTHON_CODE", "1")),
+                                            ("ExpressionPrime", None),
+                                        )
+                                    ],
+                                ),
+                            ),
+                        ),
+                        ("ExpressionPrime", None),
+                    ),
                     ("SEMICOLON", ";"),
                 ),
-            )
+            ),
         ],
     ),
 )
 
-# # ast = (
-#     "Viper",
-#     (
-#         "StatementList",
-#         [
-#             (
-#                 "Statement",
-#                 ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
-#                 (
-#                     "StatementPrime",
-#                     ("VAR", "x"),
-#                     ("ASSIGN", "="),
-#                     ("Expression", ("SimpleExpression", ("PYTHON_CODE", "1")), ("ExpressionPrime", None)),
-#                     ("SEMICOLON", ";"),
-#                 ),
-#             ),
-#             (
-#                 "Statement",
-#                 ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
-#                 (
-#                     "StatementPrime",
-#                     ("VAR", "y"),
-#                     ("ASSIGN", "="),
-#                     ("Expression", ("SimpleExpression", ("PYTHON_CODE", "1")), ("ExpressionPrime", None)),
-#                     ("SEMICOLON", ";"),
-#                 ),
-#             ),
-#             (
-#                 "Statement",
-#                 (
-#                     "ExpressionStatement",
-#                     (
-#                         "Expression",
-#                         ("SimpleExpression", ("PYTHON_CODE", "print")),
-#                         (
-#                             "ExpressionPrime",
-#                             (
-#                                 "SimpleExpression",
-#                                 (
-#                                     "ParenthesizedExpression",
-#                                     (
-#                                         "Expression",
-#                                         ("SimpleExpression", "VAR", ("VAR", "x")),
-#                                         (
-#                                             "ExpressionPrime",
-#                                             ("SimpleExpression", "OP", ("OP", "+")),
-#                                             (
-#                                                 "ExpressionPrime",
-#                                                 ("SimpleExpression", "VAR", ("VAR", "y")),
-#                                                 ("ExpressionPrime", None),
-#                                             ),
-#                                         ),
-#                                     ),
-#                                 ),
-#                             ),
-#                             ("ExpressionPrime", None),
-#                         ),
-#                     ),
-#                     ("SEMICOLON", ";"),
-#                 ),
-#             ),
-#         ],
-#     ),
-# )
+
 python_code = convert_viper_to_python(ast1)
 print(python_code)

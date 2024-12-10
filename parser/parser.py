@@ -303,10 +303,11 @@ class Parser:
         pos = self.position
         self.push_error_context()
         if self.match("FUNC") and self.match("LPAREN"):
+            func_name = self.tokens[self.position - 2]
             args = self.parse_argument_list()
             if self.match("RPAREN"):  # TODO match colon
                 self.pop_error_context(True)
-                return ("FunctionCall", args)
+                return ("FunctionCall", func_name, args)  # TODO
             self.add_error("Expected RPAREN to close FunctionCall arguments")
         self.pop_error_context(False)
         self.position = pos
