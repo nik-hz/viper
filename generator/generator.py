@@ -147,7 +147,7 @@ def convert_viper_to_python(ast):
 
 
 # Test with the provided AST
-ast = (
+ast1 = (
     "Viper",
     (
         "StatementList",
@@ -195,7 +195,7 @@ ast = (
         ],
     ),
 )
-ast = (
+ast2 = (
     "Viper",
     (
         "StatementList",
@@ -279,5 +279,5 @@ ast = (
 #         ],
 #     ),
 # )
-python_code = convert_viper_to_python(ast)
+python_code = convert_viper_to_python(ast1)
 print(python_code)

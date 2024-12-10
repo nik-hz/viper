@@ -1,0 +1,5 @@
+NoneType :: def print_one():{ 
+    int :: num = 1;
+    print(num);
+};
+

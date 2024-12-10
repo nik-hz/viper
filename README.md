@@ -6,45 +6,56 @@ Nikolaus Holzer: nh2677
 
 # Viper to Python sample pairs
 Our code generator should convert the AST into correct python code. We check for compile time type consistency in the Viper code and then turn it to python. 
-We only support arithmetic and boolean operations and do not support print in this version.
+We only support arithmetic and boolean operations NoneType function and do not support print, return, and function calls in this version.
 
 ### 1) 
 **Viper input**
 ``` python 
-NoneType :: def say_hello_world():{ 
-    string :: text = 'hello world'; 
-    print(text);
-};
+int :: num = 1; 
 ```
 
 **Python output**
 ```python 
-def say_hello_world():
-    text = 'hello world'
-    assert isinstance(text, str)
-    print(text)
+num = 1
+assert isinstance(num, int)
 ```
+
 ### 2) 
 **Viper input**
 ``` python 
-str :: def say_hello_world():{ 
-    string :: text = 'hello world'; 
-    return text;
+NoneType :: def print_one():{ 
+    int :: num = 1; 
 };
-
-output = say_hello_world()
 ```
 
 **Python output**
 ```python 
-def say_hello_world(){
-    text = 'hello world'
-    assert isinstance(text, str)
-    return text
+def print_one():
+    num = 1
+    assert isinstance(num, int)
+```
+### 3) 
+**Viper input**
+``` python 
+NoneType :: def calculation1():{ 
+    float :: num = 1.5; 
+    float :: num
+    return num;
+};
+
+float :: output = return_float();
+```
+
+**Python output**
+```python 
+def return_float(){
+    num = 1.5
+    assert isinstance(num, float)
+    return num
 }
 
-output = say_hello_world()
-assert isinstance(output, str)
+output = return_float()
+assert isinstance(output, float)
 ```
 
 ### 3) 
