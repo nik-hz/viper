@@ -14,6 +14,7 @@ class TypeChecker:
         Entry point for type checking.
         """
         self._check_types_recursive(self.token_list, 0)
+        
 
     def _check_types_recursive(self, tokens, start_index):
         """
@@ -22,6 +23,7 @@ class TypeChecker:
         :param start_index: The starting index for this scope.
         :return: The index after the current scope ends. --> for nested stack dive
         """
+
         current_scope = self.scope_stack[-1]  # Get the current scope
         index = start_index
         brackets = []
@@ -61,14 +63,19 @@ class TypeChecker:
                     if next_term == "VAR":  # Check if it's followed by a variable
                         current_scope.define(next_val, type_declared)
                         index += 1  # Skip the variable token
+                    elif next_term == "DEF":
+                        current_scope.define(next_val, type_declared)
+                        index += 1
                     else:
                         self.errors.append(
                             f"Type '{type_declared}' must be followed by a variable at index {index + 2}."
                         )
+                        exit
             elif term == "VAR":  # Variable use
                 var_type = current_scope.lookup(val)
                 if var_type is None:
                     self.errors.append(f"Variable '{val}' used before declaration at index {index}.")
+                index += 1
             # change scope
             elif term == "FUNC" or val in ["for", "if", "elif", "else"]:
                 # branch into new scope
@@ -87,9 +94,11 @@ class TypeChecker:
                     self.errors.append(
                         f"Type mismatch between '{left_val}': {current_scope.lookup(left_val)} and '{right_val}': {current_scope.lookup(right_val)}. At index {index + 2}."
                     )
+                index += 1
 
             else:
-                pass
+                index += 1
+                continue
 
     def parse_token(self, token):
         parts = token.split(", ")
@@ -111,52 +120,54 @@ if __name__ == "__main__":
                 """,
         }
     ]
-    
 
+    tokens = [
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, x>",
+        "<ASSIGN, =>",
+        "<PYTHON_CODE, 10>",
+        "<SEMICOLON, ;>",
+        "<TYPE, NoneType>",
+        "<TYPE_DEC, ::>",
+        "<DEF, def>",
+        "<FUNC, foo>",
+        "<LPAREN, (>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, n>",
+        "<RPAREN, )>",
+        "<PYTHON_CODE, :>",
+        "<LBRACE, {>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, x>",
+        "<ASSIGN, =>",
+        "<PYTHON_CODE, 1>",
+        "<SEMICOLON, ;>",
+        "<RBRACE, }>",
+        "<SEMICOLON, ;>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, y>",
+        "<ASSIGN, =>",
+        "<PYTHON_CODE, 1>",
+        "<SEMICOLON, ;>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, x>",
+        "<ASSIGN, =>",
+        "<PYTHON_CODE, 12>",
+        "<SEMICOLON, ;>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, a>",
+        "<ASSIGN, =>",
+        "<VAR, x>",
+        "<OP, +>",
+        "<VAR, y>",
+        "<SEMICOLON, ;>",
+    ]
 
-# Tokens:
-# <TYPE, int>
-# <TYPE_DEC, ::>
-# <VAR, x>
-# <ASSIGN, =>
-# <PYTHON_CODE, 10>
-# <SEMICOLON, ;>
-# <TYPE, NoneType>
-# <TYPE_DEC, ::>
-# <DEF, def>
-# <FUNC, foo>
-# <LPAREN, (>
-# <TYPE, int>
-# <TYPE_DEC, ::>
-# <VAR, n>
-# <RPAREN, )>
-# <PYTHON_CODE, :>
-# <LBRACE, {>
-# <TYPE, int>
-# <TYPE_DEC, ::>
-# <VAR, x>
-# <ASSIGN, =>
-# <PYTHON_CODE, 1>
-# <SEMICOLON, ;>
-# <RBRACE, }>
-# <SEMICOLON, ;>
-# <TYPE, int>
-# <TYPE_DEC, ::>
-# <VAR, y>
-# <ASSIGN, =>
-# <PYTHON_CODE, 1>
-# <SEMICOLON, ;>
-# <TYPE, int>
-# <TYPE_DEC, ::>
-# <VAR, x>
-# <ASSIGN, =>
-# <PYTHON_CODE, 12>
-# <SEMICOLON, ;>
-# <TYPE, int>
-# <TYPE_DEC, ::>
-# <VAR, a>
-# <ASSIGN, =>
-# <VAR, x>
-# <OP, +>
-# <VAR, y>
-# <SEMICOLON, ;>
+    typechecker = TypeChecker(tokens)
+    typechecker.check_types()

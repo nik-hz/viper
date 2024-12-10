@@ -12,6 +12,7 @@ if parser_path not in sys.path:
 
 from scanner import Scanner
 from parser import Parser
+# from typechecker import TypeChecker
 
 
 class Pipeline:
@@ -65,6 +66,8 @@ class Pipeline:
                 print(f"Got:      {ast}")
 
         return ast
+        
+        
 
     def visualize_ast(self, ast, level=0, is_last=True):
         """Visualize AST as a tree structure matching the requested format."""
@@ -1017,10 +1020,9 @@ if __name__ == "__main__":
     examples2 = [
         {
             "code": """
-            float :: def return_float():{ 
-                float :: num = 1.5; 
-                return num;
-            };
+            int :: x = 1;
+            int :: y = 1;
+            print(x + y);
             """,
         }
     ]
