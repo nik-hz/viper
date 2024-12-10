@@ -1,7 +1,2 @@
-NoneType :: def print_one():{ 
-    int :: num = 1;
-    print(num);
-};
-
-print_one();
-
+str :: text = "Hey!";
+print(text);
