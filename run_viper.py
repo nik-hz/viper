@@ -125,11 +125,15 @@ def run_example(pipeline, input_code, expected_tokens=None, expected_ast=None, e
     print("\n\nFinal Code")
     print(code)
 
+    with open(f"examples/{file[:-3]}.py", "w") as f:
+        f.write(code)
+
 
 if __name__ == "__main__":
     pipeline = Pipeline(dbg=False)
 
-    # Test cases
+    # Test cases for pa1 and pa2
+    '''
     examples = [
         {
             "code": """
@@ -1047,12 +1051,21 @@ if __name__ == "__main__":
             """,
         }
     ]
-    # Run examples
-    for i, example in enumerate(examples2, start=1):
+    '''
+    # Run examples for pa2
+    '''
+    for i, example in enumerate(examples, start=1):
         run_example(
             pipeline,
             input_code=example["code"],
-            expected_tokens=example.get("tokens"),
-            expected_ast=example.get("ast"),
+            #expected_tokens=example.get("tokens"),
+            #expected_ast=example.get("ast"),
             example_num=i,
         )
+    '''
+    # Run examples through files end with .vp in examples folder
+    for file in os.listdir("./examples"):
+        if file.endswith(".vp"):
+            with open(f"examples/{file}", "r") as f:
+                code = f.read()
+                run_example(pipeline, input_code=code, example_num=file)
