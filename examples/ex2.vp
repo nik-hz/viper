@@ -3,3 +3,5 @@ NoneType :: def print_one():{
     print(num);
 };
 
+print_one();
+
