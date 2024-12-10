@@ -119,8 +119,8 @@ def run_example(pipeline, input_code, expected_tokens=None, expected_ast=None, e
     print("\nFinal AST:")
     print(ast)
 
-    print("\nAST Tree:")
-    pipeline.visualize_ast(ast)
+    # print("\nAST Tree:")
+    # pipeline.visualize_ast(ast)
 
     print("\n\nFinal Code")
     print(code)
@@ -1048,7 +1048,7 @@ if __name__ == "__main__":
         }
     ]
     # Run examples
-    for i, example in enumerate(examples2, start=1):
+    for i, example in enumerate(examples, start=1):
         run_example(
             pipeline,
             input_code=example["code"],
