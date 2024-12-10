@@ -12,6 +12,7 @@ class Scope:
         """
         self.variables = {}  # Dictionary to store variable names and their types
         self.parent = parent  # Reference to the parent scope
+        self.function_return = None
 
     def define(self, name, var_type):
         """
@@ -20,6 +21,9 @@ class Scope:
         :param var_type: Type of the variable
         """
         self.variables[name] = var_type
+
+    def define_func_val(self, name, var_type):
+        self.function_return = var_type
 
     def lookup(self, name):
         """

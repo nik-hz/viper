@@ -14,8 +14,10 @@ class TypeChecker:
         Entry point for type checking.
         """
         self._check_types_recursive(self.token_list, 0)
+        if self.errors:
+            for e in self.errors:
+                print(e)
         return True
-        
 
     def _check_types_recursive(self, tokens, start_index):
         """
@@ -31,6 +33,8 @@ class TypeChecker:
         inside_fstring_dbl = False
         inside_fstring_sgl = False
         while index < len(tokens):
+            if self.errors:
+                exit
             token = tokens[index]
             term, val = self.parse_token(token)
 
@@ -64,8 +68,13 @@ class TypeChecker:
                     if next_term == "VAR":  # Check if it's followed by a variable
                         current_scope.define(next_val, type_declared)
                         index += 1  # Skip the variable token
-                    elif next_term == "DEF":
+                    elif next_term == "DEF":  # go parse the function
                         current_scope.define(next_val, type_declared)
+                        new_scope = current_scope.clone()
+                        new_scope.define_func_val(next_val, type_declared)
+                        self.scope_stack.append(new_scope)
+                        index = self._check_types_recursive(tokens, index + 1)
+                        self.scope_stack.pop()  # delete the nested stack and move on
                         index += 1
                     else:
                         self.errors.append(
@@ -76,9 +85,18 @@ class TypeChecker:
                 var_type = current_scope.lookup(val)
                 if var_type is None:
                     self.errors.append(f"Variable '{val}' used before declaration at index {index}.")
+                    return
                 index += 1
             # change scope
-            elif term == "FUNC" or val in ["for", "if", "elif", "else"]:
+            elif term == "FUNC":
+                # we are now using the function
+                # TODO complete here
+                new_scope = current_scope.clone()
+                self.scope_stack.append(new_scope)
+                index = self._check_types_recursive(tokens, index + 1)
+                self.scope_stack.pop()  # delete the nested stack and move on
+            # search legal operations
+            elif val in ["for", "if", "elif", "else"]:
                 # branch into new scope
                 new_scope = current_scope.clone()
                 self.scope_stack.append(new_scope)
@@ -97,6 +115,12 @@ class TypeChecker:
                     )
                 index += 1
 
+            elif val == "return":  # only handles returning variables with types for now
+                _, right_val = self.parse_token(tokens[index + 1])
+                if current_scope.lookup(right_val) != self.scope_stack[-2].function_return:
+                    self.errors.append("Type mismatch in function return")
+                index += 1
+                return 
             else:
                 index += 1
                 continue
@@ -119,6 +143,17 @@ if __name__ == "__main__":
                 int :: x = 12;
                 int :: a = x + y;
                 """,
+        }
+    ]
+
+    ex2 = [
+        {
+            """
+            int :: def calculation1():{ 
+                float :: num = 1.5; 
+                return num;
+            };
+            """
         }
     ]
 
@@ -170,5 +205,36 @@ if __name__ == "__main__":
         "<SEMICOLON, ;>",
     ]
 
-    typechecker = TypeChecker(tokens)
+    t2 = [
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<DEF, def>",
+        "<FUNC, print_one>",
+        "<LPAREN, (>",
+        "<RPAREN, )>",
+        "<PYTHON_CODE, :>",
+        "<LBRACE, {>",
+        "<TYPE, int>",
+        "<TYPE_DEC, ::>",
+        "<VAR, num>",
+        "<ASSIGN, =>",
+        "<PYTHON_CODE, 1>",
+        "<SEMICOLON, ;>",
+        "<PYTHON_CODE, print>",
+        "<LPAREN, (>",
+        "<VAR, num>",
+        "<RPAREN, )>",
+        "<SEMICOLON, ;>",
+        "<PYTHON_CODE, return>",
+        "<VAR, num>",
+        "<SEMICOLON, ;>",
+        "<RBRACE, }>",
+        "<SEMICOLON, ;>",
+        "<FUNC, print_one>",
+        "<LPAREN, (>",
+        "<RPAREN, )>",
+        "<SEMICOLON, ;>",
+    ]
+
+    typechecker = TypeChecker(t2)
     typechecker.check_types()
