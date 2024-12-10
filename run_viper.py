@@ -10,8 +10,18 @@ parser_path = os.path.abspath("./parser")
 if parser_path not in sys.path:
     sys.path.insert(0, parser_path)
 
+typechecker_path = os.path.abspath("./typechecker")
+if typechecker_path not in sys.path:
+    sys.path.insert(0, typechecker_path)
+
+generator_path = os.path.abspath("./generator")
+if generator_path not in sys.path:
+    sys.path.insert(0, generator_path)
+
 from scanner import Scanner
 from parser import Parser
+from typechecker import TypeChecker
+from generator import ViperToPythonGenerator
 
 
 class Pipeline:
@@ -64,7 +74,18 @@ class Pipeline:
                 print(f"Expected: {expected_ast}")
                 print(f"Got:      {ast}")
 
-        return ast
+        tc = TypeChecker(tokens)
+
+        if not tc.check_types:
+            print("Error with types!")
+            return None
+        else:
+            print("Types ok!")
+
+        generator = ViperToPythonGenerator()
+        generated_code = generator.generate(ast)
+
+        return ast, generated_code
 
     def visualize_ast(self, ast, level=0, is_last=True):
         """Visualize AST as a tree structure matching the requested format."""
@@ -93,13 +114,16 @@ def run_example(pipeline, input_code, expected_tokens=None, expected_ast=None, e
     print("Input code:")
     print(input_code)
 
-    ast = pipeline.run(input_code, expected_tokens, expected_ast)
+    ast, code = pipeline.run(input_code, expected_tokens, expected_ast)
 
     print("\nFinal AST:")
     print(ast)
 
     print("\nAST Tree:")
     pipeline.visualize_ast(ast)
+
+    print("\n\nFinal Code")
+    print(code)
 
 
 if __name__ == "__main__":
@@ -1017,10 +1041,9 @@ if __name__ == "__main__":
     examples2 = [
         {
             "code": """
-            float :: def return_float():{ 
-                float :: num = 1.5; 
-                return num;
-            };
+            int :: x = 1;
+            int :: y = 1;
+            print(x + y);
             """,
         }
     ]
