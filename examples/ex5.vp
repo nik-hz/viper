@@ -1,0 +1,6 @@
+# This is an example of a parsing error
+
+str :: def say_hello_world(){ 
+    string :: text = 'hello world'; 
+    print(text);
+};

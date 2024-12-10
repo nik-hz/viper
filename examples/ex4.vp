@@ -1,9 +1,3 @@
-float :: def calculation1():{ 
-    float :: num1 = 1.5; 
-    float :: num2 = 3.2;
-    float :: x = num1+num2;
-    return x;
-};
-
-float :: output = calculation1();
-print(output);
+# This is an example of a error handled in the tokenization phase
+str:: t = 'Hey!';
+print(t);

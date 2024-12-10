@@ -9,7 +9,7 @@ For hw3 grading, please refer to the Code Generation section.
 2) Run ```chmod +x vpc.sh``` to ensure executable access to the shell script.
 3) Run ```source ./vpc.sh```. This will activate a virtual environment called viper and set you up with required dependencies, and run the five code examples and return the outputs.
 For grading please run `python vpc.py` which will run the Viper compiler on the ex{num}.vp files in ./examples and generate the corresponding ex{num}.py code if ```source ./parser.sh``` fails. 
-And then you can run the .py code.
+4) And then you can run the generated .py code and compare their output with the expected ones. We run the code and compared the output in the demo video 2.
 
 Please find the demo video at: https://drive.google.com/drive/folders/1Dgx0PggO9zZVhKScSzEIXWRdzvQyOG7i?usp=sharing
 

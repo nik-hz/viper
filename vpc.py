@@ -1063,9 +1063,17 @@ if __name__ == "__main__":
             example_num=i,
         )
     """
-    # Run examples through files end with .vp in examples folder
-    for file in os.listdir("./examples"):
-        if file.endswith(".vp"):
-            with open(f"examples/{file}", "r") as f:
-                code = f.read()
-                run_example(pipeline, input_code=code, example_num=file)
+    # Run examples through files end with .vp in examples folder, make sure it runs from ex1.vp to ex6.vp
+    # Ensure file processing is done in order (e.g., ex1.vp to ex6.vp)
+    example_folder = "./examples"
+    # Collect and sort .vp files by numerical order
+    vp_files = sorted(
+        [file for file in os.listdir(example_folder) if file.endswith(".vp")],
+        key=lambda x: int(x[2:-3])  # Extract numerical part from filenames like "ex1.vp"
+    )
+
+    # Process each file in order
+    for file in vp_files:
+        with open(os.path.join(example_folder, file), "r") as f:
+            code = f.read()
+            run_example(pipeline, input_code=code, example_num=int(file[2:-3]))
