@@ -127,7 +127,8 @@ class ViperToPythonGenerator:
             builder += ")"
             return builder
         elif cfg == "Expression":
-            builder += middle_expr[-1][1]
+            # builder += middle_expr[-1][1]
+            builder = self._generate_expression(middle_expr, builder)
             builder = self._generate_expression(next_expr, builder)
             return builder
         elif cfg == "ExpressionPrime":
@@ -136,6 +137,17 @@ class ViperToPythonGenerator:
             return builder
         elif cfg == "SimpleExpression":
             builder = self._generate_expression(next_expr, builder)
+            return builder
+        elif cfg == "FunctionCall":
+            builder = self._generate_expression(middle_expr, builder)
+            builder += "("
+            temp = self._generate_expression(next_expr, builder)
+            if temp:
+                builder = temp
+            builder += ")"
+            return builder
+        elif cfg == "ArgumentList":
+            builder = self._generate_expression(next_expr[0], builder)
             return builder
 
 
@@ -224,7 +236,23 @@ ast1 = (
                     "ExpressionStatement",
                     (
                         "Expression",
-                        ("SimpleExpression", ("FunctionCall", ("ArgumentList", []))),
+                        (
+                            "SimpleExpression",
+                            (
+                                "FunctionCall",
+                                ("FUNC", "print_one"),
+                                (
+                                    "ArgumentList",
+                                    [
+                                        (
+                                            "Expression",
+                                            ("SimpleExpression", ("PYTHON_CODE", "1")),
+                                            ("ExpressionPrime", None),
+                                        )
+                                    ],
+                                ),
+                            ),
+                        ),
                         ("ExpressionPrime", None),
                     ),
                     ("SEMICOLON", ";"),
@@ -233,6 +261,7 @@ ast1 = (
         ],
     ),
 )
+
 
 python_code = convert_viper_to_python(ast1)
 print(python_code)
