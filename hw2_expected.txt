@@ -773,3 +773,78 @@ Viper
 │   │   │   │   │   └── None
 │   │   │   └── SEMICOLON
 │   │   │   │   └── ;
+
+
+
+
+
+
+
+
+
+
+
+ast = (
+    "Viper",
+    (
+        "StatementList",
+        [
+            (
+                "Statement",
+                ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                (
+                    "StatementPrime",
+                    ("VAR", "x"),
+                    ("ASSIGN", "="),
+                    ("Expression", ("SimpleExpression", ("PYTHON_CODE", "1")), ("ExpressionPrime", None)),
+                    ("SEMICOLON", ";"),
+                ),
+            ),
+            (
+                "Statement",
+                ("TypeDeclaration", ("TYPE", "int"), ("TYPE_DEC", "::")),
+                (
+                    "StatementPrime",
+                    ("VAR", "y"),
+                    ("ASSIGN", "="),
+                    ("Expression", ("SimpleExpression", ("PYTHON_CODE", "1")), ("ExpressionPrime", None)),
+                    ("SEMICOLON", ";"),
+                ),
+            ),
+            (
+                "Statement",
+                (
+                    "ExpressionStatement",
+                    (
+                        "Expression",
+                        ("SimpleExpression", ("PYTHON_CODE", "print")),
+                        (
+                            "ExpressionPrime",
+                            (
+                                "SimpleExpression",
+                                (
+                                    "ParenthesizedExpression",
+                                    (
+                                        "Expression",
+                                        ("SimpleExpression", "VAR", ("VAR", "x")),
+                                        (
+                                            "ExpressionPrime",
+                                            ("SimpleExpression", "OP", ("OP", "+")),
+                                            (
+                                                "ExpressionPrime",
+                                                ("SimpleExpression", "VAR", ("VAR", "y")),
+                                                ("ExpressionPrime", None),
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            ("ExpressionPrime", None),
+                        ),
+                    ),
+                    ("SEMICOLON", ";"),
+                ),
+            ),
+        ],
+    ),
+)
